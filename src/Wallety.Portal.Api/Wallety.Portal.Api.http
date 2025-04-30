@@ -1,0 +1,6 @@
+@Wallety.Portal.Api_HostAddress = http://localhost:5136
+
+GET {{Wallety.Portal.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
