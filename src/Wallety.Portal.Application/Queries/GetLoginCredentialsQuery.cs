@@ -5,6 +5,14 @@ namespace Wallety.Portal.Application.Queries
 {
     public class GetLoginCredentialsQuery : IRequest<LoginResponse>
     {
-        public string SessionToken { get; set; }
+        private string? _sessionToken;
+
+        public string SessionToken
+        {
+            get => _sessionToken ?? string.Empty;
+            set => _sessionToken = value.StartsWith("Bearer ") == true
+                ? value["Bearer ".Length..].Trim()
+                : value;
+        }
     }
 }

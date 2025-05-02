@@ -9,13 +9,13 @@ using Wallety.Portal.Core.Requests.User;
 namespace Wallety.Portal.Application.Handlers.Users
 {
     public class RoleUpdateHandler(IUserRepository repository) :
-        IRequestHandler<UpdateCommand<UserRoleChangeDTO, UpdateResponse>, UpdateResponse>
+        IRequestHandler<UpdateCommand<UserRoleUpdateDTO, UpdateResponse>, UpdateResponse>
     {
         private readonly IUserRepository _repository = repository;
 
-        public async Task<UpdateResponse> Handle(UpdateCommand<UserRoleChangeDTO, UpdateResponse> request, CancellationToken cancellationToken)
+        public async Task<UpdateResponse> Handle(UpdateCommand<UserRoleUpdateDTO, UpdateResponse> request, CancellationToken cancellationToken)
         {
-            var dto = LazyMapper.Mapper.Map<UserRoleChangeModel>(request.Item);
+            var dto = LazyMapper.Mapper.Map<UserRoleUpdateModel>(request.Item);
 
             var response = await _repository.UpdateUserRole(dto);
 

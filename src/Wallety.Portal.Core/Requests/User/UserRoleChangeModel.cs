@@ -1,6 +1,6 @@
 namespace Wallety.Portal.Core.Requests.User
 {
-    public class UserRoleChangeModel
+    public class UserRoleUpdateModel
     {
         public string Name { get; set; }
         public string Surname { get; set; }

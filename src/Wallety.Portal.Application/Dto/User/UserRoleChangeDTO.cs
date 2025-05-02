@@ -1,6 +1,6 @@
 namespace Wallety.Portal.Application.Dto.User
 {
-    public class UserRoleChangeDTO
+    public class UserRoleUpdateDTO
     {
         public string Name { get; set; }
         public string Surname { get; set; }

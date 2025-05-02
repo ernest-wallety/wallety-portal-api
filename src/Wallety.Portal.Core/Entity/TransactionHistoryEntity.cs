@@ -9,7 +9,7 @@ namespace Wallety.Portal.Core.Entity
         public string TransactionReference { get; set; }
 
         public Guid? UserSessionId { get; set; }
-        public Guid? UserId { get; set; }
+        public string? UserId { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }

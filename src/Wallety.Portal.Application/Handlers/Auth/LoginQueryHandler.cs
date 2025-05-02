@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Wallety.Portal.Application.Commands;
 using Wallety.Portal.Application.Mapper;
@@ -68,11 +67,11 @@ namespace Wallety.Portal.Application.Handlers.Auth
             var sessionResponse = await _repository.CreateUserSession(new UserSessionEntity
             {
                 UserId = existingUser.UserId,
-                SessionToken = responseLogin.SessionToken
+                SessionToken = responseLogin.SessionToken!
             });
 
             if (!sessionResponse.IsSuccess)
-                throw new Exception(sessionResponse.ErrorMessage);
+                throw new Exception(sessionResponse.ResponseMessage);
 
             return responseLogin;
         }
@@ -83,7 +82,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
             var userRoles = existingUser.Roles.ToList();
             var defaultRole = userRoles.FirstOrDefault(role => role.IsDefault == true)?.RoleId;
 
-            if (!string.IsNullOrEmpty(defaultRole.ToString()))
+            if (!string.IsNullOrEmpty(defaultRole!.ToString()))
             {
                 if (userRoles.Any(rc => rc.RoleId == RoleConstants.ADMIN.ToString()))
                     defaultRole = await UpdateDefaultRole(existingUser, RoleConstants.ADMIN.ToString());

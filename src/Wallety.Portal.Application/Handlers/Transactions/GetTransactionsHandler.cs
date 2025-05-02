@@ -18,9 +18,7 @@ namespace Wallety.Portal.Application.Handlers.Transactions
         {
             var items = await _repository.GetTransactions(request.Criteria);
 
-            var response = LazyMapper.Mapper.Map<Pagination<TransactionHistoryResponse>>(items);
-
-            foreach (var item in response.Items)
+            foreach (var item in items.Items)
             {
                 var result = await _repository.GetTransactionByReferenceQuery(item.TransactionReference);
 
@@ -43,6 +41,8 @@ namespace Wallety.Portal.Application.Handlers.Transactions
                     if (transaction.TransactionTypeId == TransactionTypeConstants.WALLETY_REFUND) item.TransactionStatus = historyJson.Where(x => x.IsComplete && x.TransactionTypeId != TransactionTypeConstants.WALLETY_REFUND).FirstOrDefault()?.TransactionStatus!;
                 }
             }
+
+            var response = LazyMapper.Mapper.Map<Pagination<TransactionHistoryResponse>>(items);
 
             return response;
         }

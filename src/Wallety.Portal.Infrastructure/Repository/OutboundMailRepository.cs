@@ -37,7 +37,9 @@ namespace Wallety.Portal.Infrastructure.Repository
                 parameters
             );
 
-            return CreateRecordResult.Successs(result!.p_return_record_id);
+            if (result?.p_is_error == true) return CreateRecordResult.Error(result?.p_result_message);
+
+            return CreateRecordResult.Successs(result!.p_return_record_id, result!.p_result_message);
         }
     }
 }

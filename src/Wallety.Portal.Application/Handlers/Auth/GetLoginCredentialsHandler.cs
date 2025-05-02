@@ -14,7 +14,8 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
         public async Task<LoginResponse> Handle(GetLoginCredentialsQuery request, CancellationToken cancellationToken)
         {
-            return _caching.Get<LoginResponse>(request.SessionToken);
+            return _caching.Get<LoginResponse>(request.SessionToken)
+                ?? throw new ArgumentException("The provided session token is invalid.");
         }
     }
 }

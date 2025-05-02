@@ -27,7 +27,7 @@ namespace Wallety.Portal.Core.Repository
         Task<UpdateRecordResult> RestoreUser(UserEntity entity);
 
         Task<UpdateRecordResult> UpdatePassword(PasswordResetModel model);
-        Task<UpdateRecordResult> UpdateUserRole(UserRoleChangeModel model);
+        Task<UpdateRecordResult> UpdateUserRole(UserRoleUpdateModel model);
 
         Task<UpdateRecordResult> UpdateDefaultRole(string roleId, string userId);
     }

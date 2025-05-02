@@ -37,7 +37,7 @@ namespace Wallety.Portal.Application.Mapper
             CreateMap<Pagination<UserEntity>, Pagination<UserResponse>>().ReverseMap();
 
             CreateMap<PasswordResetDTO, PasswordResetModel>().ReverseMap();
-            CreateMap<UserRoleChangeDTO, UserRoleChangeModel>().ReverseMap();
+            CreateMap<UserRoleUpdateDTO, UserRoleUpdateModel>().ReverseMap();
 
 
             // Menu
@@ -48,8 +48,10 @@ namespace Wallety.Portal.Application.Mapper
             CreateMap<DataList<MenuItemEntity>, DataList<MenuItemResponse>>().ReverseMap();
 
             // Transaction History
-            CreateMap<Pagination<TransactionHistoryEntity>, Pagination<TransactionHistoryResponse>>().ReverseMap();
+            CreateMap<TransactionHistoryEntity, TransactionHistoryResponse>().ReverseMap();
             CreateMap<DataList<TransactionHistoryEntity>, DataList<TransactionHistoryResponse>>().ReverseMap();
+            CreateMap<Pagination<TransactionHistoryEntity>, Pagination<TransactionHistoryResponse>>().ReverseMap();
+
 
             // Customer
             CreateMap<Pagination<CustomerEntity>, Pagination<CustomerResponse>>().ReverseMap();

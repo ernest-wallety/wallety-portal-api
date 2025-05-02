@@ -26,7 +26,7 @@ namespace Wallety.Portal.Infrastructure.Repository
 
         public async Task<Pagination<CustomerEntity>> GetAllCustomers()
         {
-            var query = new UsersQuery(null).GetCustomerQuery();
+            var query = UsersQuery.GetCustomersQuery();
             var items = await _sqlContext.SelectQuery<CustomerEntity>(query, null);
 
             return new Pagination<CustomerEntity>

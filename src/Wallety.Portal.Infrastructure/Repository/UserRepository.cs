@@ -66,9 +66,32 @@ namespace Wallety.Portal.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
-        public Task<CreateRecordResult> CreateUser(UserEntity entity)
+        public async Task<CreateRecordResult> CreateUser(UserEntity entity)
         {
-            throw new NotImplementedException();
+            var parameters = new
+            {
+                p_result_message = default(string),
+                p_is_error = default(bool),
+                p_return_record_id = default(Guid),
+
+                p_name = entity.FirstName,
+                p_surname = entity.Surname,
+                p_phone_number = entity.PhoneNumber,
+                p_phone_number_confirmed = entity.PhoneNumberConfirmed,
+                p_username = entity.Username,
+                p_email = entity.Email,
+                p_password_hash = entity.PasswordHash,
+                p_role_id = entity.RoleId,
+            };
+
+            var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
+                "user_session_insert",
+                parameters
+            );
+
+            if (result?.p_is_error == true) return CreateRecordResult.Error(result?.p_result_message);
+
+            return CreateRecordResult.Successs(result!.p_return_record_id, result!.p_result_message);
         }
 
         public async Task<CreateRecordResult> CreateUserSession(UserSessionEntity entity)
@@ -77,19 +100,20 @@ namespace Wallety.Portal.Infrastructure.Repository
             {
                 p_result_message = default(string),
                 p_is_error = default(bool),
+                p_return_record_id = default(Guid),
 
-                p_session_token = entity.UserId,
-                p_user_id = entity.SessionToken
+                p_session_token = entity.SessionToken,
+                p_user_id = entity.UserId
             };
 
             var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
-                "user_session_start",
+                "user_session_insert",
                 parameters
             );
 
             if (result?.p_is_error == true) return CreateRecordResult.Error(result?.p_result_message);
 
-            return CreateRecordResult.Successs(result?.p_result_message);
+            return CreateRecordResult.Successs(result!.p_return_record_id, result!.p_result_message);
         }
 
         public async Task<UpdateRecordResult> UpdateUserSession(UserSessionEntity entity)
@@ -100,12 +124,11 @@ namespace Wallety.Portal.Infrastructure.Repository
                 p_is_error = default(bool),
 
                 p_user_id = entity.SessionToken,
-                p_is_active = entity.IsActive,
                 p_is_auto_logout = entity.IsAutoLogout
             };
 
             var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
-                "user_session_end",
+                "user_session_update",
                 parameters
             );
 
@@ -136,6 +159,7 @@ namespace Wallety.Portal.Infrastructure.Repository
             {
                 p_result_message = default(string),
                 p_is_error = default(bool),
+                p_return_record_id = default(string),
 
                 p_email = model.Email,
                 p_new_password = model.NewPassword,
@@ -144,7 +168,7 @@ namespace Wallety.Portal.Infrastructure.Repository
             };
 
             var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
-                "update_user_password_and_otp",
+                "user_password_and_otp_upsert",
                 parameters
             );
 
@@ -153,7 +177,7 @@ namespace Wallety.Portal.Infrastructure.Repository
             return UpdateRecordResult.Successs(result?.p_result_message);
         }
 
-        public async Task<UpdateRecordResult> UpdateUserRole(UserRoleChangeModel model)
+        public async Task<UpdateRecordResult> UpdateUserRole(UserRoleUpdateModel model)
         {
             var parameters = new
             {

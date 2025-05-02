@@ -1,4 +1,5 @@
 using Wallety.Portal.Core.Helpers;
+using Wallety.Portal.Core.Helpers.Constants;
 using Wallety.Portal.Core.Specs;
 
 namespace Wallety.Portal.Infrastructure.DbQueries
@@ -96,6 +97,30 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                 ORDER BY {_sortExpression}
 
                 LIMIT {_criteria.PageSize} OFFSET {(_criteria.PageIndex - 1) * _criteria.PageSize}
+            ";
+
+            return query;
+        }
+
+        public static string GetCustomersQuery()
+        {
+            var query = $@"
+
+                {MainSelect()}
+
+                WHERE 1=1 AND r.""Id"" = '{RoleConstants.CUSTOMER}'      
+
+                GROUP BY 
+                    u.""Id"", 
+                    c.""CountryId"", 
+                    us.""Id"", 
+                    us.""LastActiveTime"", 
+                    role_info.""Id"", 
+                    role_info.""Name"",
+                    ua.""Id"",
+                    w.""WalletId"",
+                    t.""TransactionId"",
+                    t.""TransactionDate""
             ";
 
             return query;

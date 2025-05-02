@@ -2,20 +2,20 @@ namespace Wallety.Portal.Application.Response.General
 {
     public class CreateResponse
     {
-        public Guid? ReturnRecordId { get; set; }
+        public Guid ReturnRecordId { get; set; }
         public bool IsSuccess { get; set; }
-        public string? ErrorMessage { get; set; }
+        public string? ResponseMessage { get; set; }
 
         public CreateResponse() { }
 
-        public static CreateResponse Successs(Guid id)
+        public static CreateResponse Successs(Guid id, string message)
         {
-            return new CreateResponse() { IsSuccess = true, ReturnRecordId = id };
+            return new CreateResponse() { IsSuccess = true, ReturnRecordId = id, ResponseMessage = message };
         }
 
-        public static CreateResponse Error(Exception ex)
+        public static CreateResponse Error(string message)
         {
-            return new CreateResponse() { IsSuccess = false, ErrorMessage = ex.Message };
+            return new CreateResponse() { IsSuccess = false, ResponseMessage = message };
         }
     }
 }

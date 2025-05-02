@@ -12,9 +12,9 @@ namespace Wallety.Portal.Application.Response.General
             return new UpdateResponse() { IsSuccess = true, ResponseMessage = message };
         }
 
-        public static UpdateResponse Error(Exception ex)
+        public static UpdateResponse Error(string message)
         {
-            return new UpdateResponse() { IsSuccess = false, ResponseMessage = ex.Message };
+            return new UpdateResponse() { IsSuccess = false, ResponseMessage = message };
         }
     }
 }

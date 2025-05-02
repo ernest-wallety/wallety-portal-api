@@ -4,6 +4,7 @@ using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Queries.General;
 using Wallety.Portal.Application.Response.Customer;
 using Wallety.Portal.Core.Entity.Customer;
+using Wallety.Portal.Core.Helpers;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Specs;
 
@@ -17,6 +18,8 @@ namespace Wallety.Portal.Application.Handlers.Customer
         public async Task<Pagination<CustomerVerifyResponse>> Handle(ListQuery<CustomerVerifyResponse> request, CancellationToken cancellationToken)
         {
             var items = await _repository.GetUnverifiedCustomers(request.Criteria);
+
+            foreach (var u in items.Items) u.CustomerId = EncryptionHelper.Encrypt(u.CustomerId);
 
             var mappedUsers = items.Items.Select(u =>
             {

@@ -10,7 +10,7 @@ using Wallety.Portal.Core.Results;
 using Wallety.Portal.Core.Templates;
 using Wallety.Portal.Core.Utils;
 
-namespace Wallety.Portal.Application.Handlers.Users
+namespace Wallety.Portal.Application.Handlers.Auth
 {
     public class OneTimePasswordHandler(
         IUserRepository userRepository,

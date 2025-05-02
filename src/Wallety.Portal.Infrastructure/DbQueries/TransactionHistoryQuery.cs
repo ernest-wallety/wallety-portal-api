@@ -99,7 +99,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                     x.FirstName,
                     x.""Surname"",
                     x.""Email"",
-                    x.""Phonber"",
+                    x.""PhoneNumber"",
                     x.""Amount"",
                     x.""TransactionTypeId"",
                     x.""ProductId"",
@@ -112,7 +112,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                         THEN 'Purchase of ' || COALESCE(x.""ProductDisplayName"", x.""ProductName"", '')
 
                         WHEN x.""TransactionTypeId"" in ('{TransactionTypeConstants.PLEASE_PAY_ME}', '{TransactionTypeConstants.TOP_ME_UP}')
-                        THEN 'Request of money from ' || COALESCE(x.""PayerWhatsappNumber"", x.""Phonber"", '')
+                        THEN 'Request of money from ' || COALESCE(x.""PayerWhatsappNumber"", x.""PhoneNumber"", '')
 
                         WHEN x.""TransactionTypeId"" = '{TransactionTypeConstants.WALLETY_DEPOSIT}'
                         THEN 'Top up of account balance' 
@@ -156,7 +156,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                                 'Surname', x.""Surname"",
                                 'Email', x.""Email"",
                                 'UserName', x.""UserName"",
-                                'Phonber', x.""Phonber"",
+                                'PhoneNumber', x.""PhoneNumber"",
 
                                 'Amount', x.""Amount"",
 
@@ -213,7 +213,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                         u.""UserName"",
                         u.""IdNumber"",
                         u.""PassportNumber"",
-                        u.""Phonber"",
+                        u.""PhoneNumber"",
                         tr.""Amount"",
                         tr.""TransactionTypeId"",
                         ty.""Type"" AS TransactionTypeName,
@@ -247,7 +247,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
 
                     FROM ""TransactionHistory"" tr
                     LEFT JOIN ""TransactionProcessStatuses"" ts ON tr.""TransactionProcessStatusId"" = ts.""Id""
-                    LEFT JOIN ""TransactionTypeConstants"" ty ON tr.""TransactionTypeId"" = ty.""TransactionTypeId""
+                    LEFT JOIN ""TransactionTypes"" ty ON tr.""TransactionTypeId"" = ty.""TransactionTypeId""
                     LEFT JOIN ""PaymentOptions"" po ON tr.""PaymentOptionId"" = po.""PaymentOptionId""
                     LEFT JOIN ""UserSessions"" us ON tr.""UserSessionId"" = us.""Id""
                     LEFT JOIN ""WalletyMeRequests"" w ON tr.""WalletyMeRequestId"" = w.""RequestId""

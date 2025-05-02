@@ -3,8 +3,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wallety.Portal.Application.Commands;
+using Wallety.Portal.Application.Commands.General;
+using Wallety.Portal.Application.Dto.User;
+using Wallety.Portal.Application.Queries;
+using Wallety.Portal.Application.Queries.General;
 using Wallety.Portal.Application.Response;
 using Wallety.Portal.Application.Response.Auth;
+using Wallety.Portal.Application.Response.General;
+using Wallety.Portal.Application.Response.Menu;
+using Wallety.Portal.Core.Specs;
 
 namespace Wallety.Portal.Api.Controllers
 {
@@ -25,20 +32,52 @@ namespace Wallety.Portal.Api.Controllers
 
             _logger.LogInformation($"Login result for {requestLogin.Email} {result.Success}");
 
-            return Ok(ReturnSuccessModel<LoginResponse>(result, "Login successful", (int)HttpStatusCode.OK, true, 0));
+            return Ok(ReturnSuccessModel<LoginResponse>(result, result.ResponseMessage!, (int)HttpStatusCode.OK, true, 0));
         }
 
-        // [Authorize]
-        // [HttpPost]
-        // [Route("Logout")]
-        // [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        // public async Task<IActionResult> Logout()
-        // {
+        [Authorize]
+        [HttpPost]
+        [Route("Logout")]
+        [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Logout()
+        {
+            var result = await _mediator.Send(new CreateLogoutCommand());
 
-        //     var result = await _mediator.Send(requestLogin);
+            return Ok(ReturnSuccessModel<UpdateResponse>(result, "Logout successful!", (int)HttpStatusCode.OK, true, 0));
+        }
 
+        [Authorize]
+        [HttpGet]
+        [Route("MenuStructure")]
+        [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> MenuStructure()
+        {
+            var result = await _mediator.Send(new ListAllQuery<MenuResponse>(null));
 
-        //     return Ok(ReturnSuccessModel<LoginResponse>(result, "Logout successful", (int)HttpStatusCode.OK, true, 0));
-        // }
+            return Ok(ReturnSuccessModel<DataList<MenuResponse>>(result));
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("RefreshUser")]
+        [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> RefreshUser()
+        {
+            var result = await _mediator.Send(new GetLoginCredentialsQuery { SessionToken = Request.Headers["Authorization"].ToString() });
+
+            return Ok(ReturnSuccessModel<LoginResponse>(result, "User refreshed successfully!", (int)HttpStatusCode.OK, true, 0));
+        }
+
+        [AllowAnonymous]
+        [HttpPut]
+        [Route("OneTimePassword")]
+        [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateCompanyPacakge([FromBody] PasswordResetDTO dto)
+        {
+            var result = await _mediator.Send(new UpdateCommand<PasswordResetDTO, UpdateResponse>(dto));
+
+            return Ok(ReturnSuccessModel<UpdateResponse>(result, $"Password reset email has been sent to {dto.Email}!", (int)HttpStatusCode.OK, true, 0));
+
+        }
     }
 }

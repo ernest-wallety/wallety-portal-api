@@ -14,5 +14,7 @@ namespace Wallety.Portal.Core.Specs
         public int? ExcludeId { get; set; }
         public bool IncludeNoneOption { get; set; } = false;
         public bool IsActiveField { get; set; } = false;
+
+        public bool IsFilter { get; set; } = false;
     }
 }

@@ -17,11 +17,17 @@ namespace Wallety.Portal.Application.Handlers.Transactions
         {
             var items = await _repository.GetTransactionByReferenceQuery(request.STR!) ?? throw new ArgumentException("Transaction reference cannot be null or empty.", nameof(request.STR));
 
-            var response = LazyMapper.Mapper.Map<DataList<TransactionHistoryResponse>>(items);
-
             var historyJson = JsonSerializer.Deserialize<List<TransactionHistoryResponse>>(items.TransactionHistoryJson);
 
             historyJson = [.. historyJson!.OrderByDescending(t => t.TransactionDate)];
+
+            var results = new DataList<TransactionHistoryResponse>
+            {
+                Items = historyJson,
+                Count = historyJson.Count
+            };
+
+            var response = LazyMapper.Mapper.Map<DataList<TransactionHistoryResponse>>(results);
 
             return response;
         }
