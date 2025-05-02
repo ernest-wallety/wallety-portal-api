@@ -9,8 +9,10 @@ using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Response.Auth;
 using Wallety.Portal.Application.Response.User;
 using Wallety.Portal.Core.Entity.User;
+using Wallety.Portal.Core.Helpers.Constants;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Services;
+using Wallety.Portal.Core.Specs;
 using Wallety.Portal.Core.Utils;
 
 namespace Wallety.Portal.Application.Handlers.Auth
@@ -27,10 +29,8 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
         public async Task<LoginResponse> Handle(CreateLoginCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _repository.GetUserByEmail()
+            var existingUser = await _repository.GetUserByEmail(request.Email)
                 ?? throw new ArgumentException("The provided email or username is invalid.");
-
-            if (!(request.Password == existingUser.PasswordHash)) throw new UnauthorizedAccessException("Password is incorrect.");
 
             bool isPasswordVerified = CryptoUtil.VerifyPassword(request.Password, existingUser.SecurityStamp!, existingUser.PasswordHash);
 
@@ -38,30 +38,123 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
             var expiryDate = DateTime.Now.AddDays(1);
 
-            var responseLogin = MapResponseLogin(existingUser!, GenerateJwtToken(existingUser!));
+            var userSession = await _repository.GetUserSession(existingUser.UserId);
+
+            if (userSession.Items.Any())
+            {
+                var session = userSession.Items.FirstOrDefault();
+
+                if (session != null)
+                {
+                    if (session.IsActive) await _repository.UpdateUserSession(session);
+                }
+            }
+
+            var role = await GetUserRolesAndDefaultRole(existingUser);
+
+            var responseLogin = MapLoginResponse(existingUser!, GenerateJwtToken(existingUser!, role.Items.Where(r => r.IsDefault == true).FirstOrDefault()!));
 
             // Set the user with token and expiry date
-            existingUser.Token = responseLogin.Token;
-            existingUser.ExpiryDateTime = expiryDate;
-            existingUser.LoginTimeStamp = DateTime.Now;
-            existingUser.UpdatedBy = $"{existingUser.FirstName} {existingUser.Surname}";
+            // existingUser.Token = responseLogin.SessionToken;
+            // existingUser.ExpiryDateTime = expiryDate;
+            // existingUser.LoginTimeStamp = DateTime.Now;
+            // existingUser.UpdatedBy = $"{existingUser.FirstName} {existingUser.Surname}";
 
             SetUserInCache(existingUser!, responseLogin);
 
-            // Update the user with token and expiry date
-            await _repository.UpdateUser(existingUser!);
+            // Update the user with token, user session and expiry date
+            // await _repository.UpdateUser(existingUser!);
+
+            var sessionResponse = await _repository.CreateUserSession(new UserSessionEntity
+            {
+                UserId = existingUser.UserId,
+                SessionToken = responseLogin.SessionToken
+            });
+
+            if (!sessionResponse.IsSuccess)
+                throw new Exception(sessionResponse.ErrorMessage);
 
             return responseLogin;
         }
 
         #region Helper methods
-        private string GenerateJwtToken(UserEntity existingUser)
+        private async Task<DataList<UserRoleEntity>> GetUserRolesAndDefaultRole(UserEntity existingUser)
+        {
+            var userRoles = existingUser.Roles.ToList();
+            var defaultRole = userRoles.FirstOrDefault(role => role.IsDefault == true)?.RoleId;
+
+            if (!string.IsNullOrEmpty(defaultRole.ToString()))
+            {
+                if (userRoles.Any(rc => rc.RoleId == RoleConstants.ADMIN.ToString()))
+                    defaultRole = await UpdateDefaultRole(existingUser, RoleConstants.ADMIN.ToString());
+                else if (userRoles.Any(rc => rc.RoleId == RoleConstants.CUSTOMER_SERVICE_AGENT.ToString()))
+                    defaultRole = await UpdateDefaultRole(existingUser, RoleConstants.CUSTOMER_SERVICE_AGENT.ToString());
+                else if (userRoles.Any(rc => rc.RoleId == RoleConstants.EXECUTIVE.ToString()))
+                    defaultRole = await UpdateDefaultRole(existingUser, RoleConstants.EXECUTIVE.ToString());
+            }
+
+            return await _repository.GetUserRoles(existingUser.UserId);
+        }
+
+        private async Task<string> UpdateDefaultRole(UserEntity existingUser, string roleId)
+        {
+            var roleCodes = existingUser.Roles.Where(rc => rc.RoleId == roleId && rc.IsDefault == true).ToList();
+
+            var role = roleCodes.FirstOrDefault(r => r.RoleId == roleId);
+
+            if (role != null)
+            {
+                var result = await _repository.UpdateDefaultRole(roleId, existingUser.UserId);
+
+                if (!result.IsSuccess) throw new Exception(result.ResponseMessage);
+            }
+
+            return roleId;
+        }
+
+        private static LoginResponse MapLoginResponse(UserEntity existingUser, string token)
+        {
+            var expiryDate = DateTime.Now.AddDays(1);
+            int timeStamp = DateUtil.ConvertToTimeStamp(expiryDate);
+
+            var user = LazyMapper.Mapper.Map<UserResponse>(existingUser);
+
+            return new LoginResponse
+            {
+                ResponseMessage = "Logged in successfully!",
+
+                RoleCodes = [.. existingUser.Roles.Select(role => new UserRoleResponse
+                {
+                    RoleId = role.RoleId,
+                    RoleCode = role.RoleCode,
+                    RoleName = role.RoleName,
+                    IsDefault = role.IsDefault
+                })],
+
+                Success = true,
+
+                User = user,
+
+                UserId = user.UserId,
+                SessionToken = token,
+                Email = user.Email!,
+                Username = user.Username!,
+                ExpireDate = expiryDate,
+                Role = user.RoleName!,
+                TimeStamp = timeStamp
+            };
+        }
+
+        private string GenerateJwtToken(UserEntity existingUser, UserRoleEntity role)
         {
             var claimList = new List<Claim>
-        {
-            new(ClaimTypes.Name, existingUser.Email!),
-            new(ClaimTypes.Role, existingUser.RoleName!)
-        };
+            {
+                new(ClaimTypes.Role, role.RoleName!),
+                new(ClaimTypes.Email, existingUser.Email!),
+                new(ClaimTypes.Name, existingUser.FirstName),
+                new(ClaimTypes.Surname, existingUser.Surname),
+                new(ClaimTypes.NameIdentifier, existingUser.UserId.ToString())
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.SecretKey()!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -77,41 +170,11 @@ namespace Wallety.Portal.Application.Handlers.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private MapResponseLogin(UserEntity existingUser, string token)
-        {
-            var expiryDate = DateTime.Now.AddDays(1);
-            int timeStamp = DateUtil.ConvertToTimeStamp(expiryDate);
-
-            var user = LazyMapper.Mapper.Map<UserResponse>(existingUser);
-
-            return new LoginResponse
-            {
-                ResponseMessage = "Logged in successfully!",
-
-                RoleCodes = existingUser.Roles.Select(role => new UserRoleResponse
-                {
-                    RoleCode = role.RoleCode,
-                    RoleName = role.RoleName
-                }).ToList(),
-
-                Success = true,
-
-                User = user,
-
-                UserId = user.UserId,
-                SessionToken = token,
-                Email = user.Email!,
-                Username = user.Username!,
-                ExpireDate = expiryDate,
-                Role = user.,
-                TimeStamp = timeStamp
-            };
-        }
-
-
         private void SetUserInCache(UserEntity existingUser, LoginResponse responseLogin)
         {
-            _caching.Set("Token", responseLogin., TimeSpan.FromDays(1));
+            _caching.Set("Email", existingUser.Email, TimeSpan.FromDays(1));
+            _caching.Set("PhoneNumber", existingUser.Email, TimeSpan.FromDays(1));
+            _caching.Set("Token", responseLogin.SessionToken, TimeSpan.FromDays(1));
             _caching.Set("LoggedInUserId", existingUser.UserId, TimeSpan.FromDays(1));
             _caching.Set(responseLogin.SessionToken!, responseLogin, TimeSpan.FromDays(1));
         }

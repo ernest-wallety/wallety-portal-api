@@ -12,9 +12,9 @@ namespace Wallety.Portal.Core.Results
             return new DeleteRecordResult() { IsSuccess = true };
         }
 
-        public static DeleteRecordResult Error(Exception ex)
+        public static DeleteRecordResult Error(string message)
         {
-            return new DeleteRecordResult() { IsSuccess = false, ErrorMessage = ex.Message };
+            return new DeleteRecordResult() { IsSuccess = false, ErrorMessage = message };
         }
     }
 }

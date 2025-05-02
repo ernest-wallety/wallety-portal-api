@@ -7,15 +7,20 @@ namespace Wallety.Portal.Core.Repository
 {
     public interface IUserRepository
     {
-        Task<Pagination<UserEntity>> GetAllUsers(BaseListCriteria criteria);
+        Task<Pagination<UserEntity>> GetUsers(BaseListCriteria criteria);
 
         Task<UserEntity?> GetUserById(Guid id);
-        Task<UserEntity?> GetUserByEmail();
+        Task<UserEntity?> GetUserByEmail(string? email = null);
         Task<UserEntity?> GetUserByCellNumber();
+        Task<DataList<UserRoleEntity>> GetUserRoles(string? id = null);
+        Task<DataList<UserRoleEntity>> GetRoles();
+        Task<DataList<UserSessionEntity>> GetUserSession(string id);
 
         Task<DeleteRecordResult> DeleteUser(int id);
 
         Task<CreateRecordResult> CreateUser(UserEntity entity);
+        Task<CreateRecordResult> CreateUserSession(UserSessionEntity entity);
+        Task<UpdateRecordResult> UpdateUserSession(UserSessionEntity entity);
 
         Task<UpdateRecordResult> UpdateUser(UserEntity entity);
         Task<UpdateRecordResult> SoftDeleteUser(UserEntity entity);
@@ -24,8 +29,6 @@ namespace Wallety.Portal.Core.Repository
         Task<UpdateRecordResult> UpdatePassword(PasswordResetModel model);
         Task<UpdateRecordResult> UpdateUserRole(UserRoleChangeModel model);
 
-        Task<UpdateRecordResult> UpdateDefaultRole(string role);
-
-        Task<UserEntity> GetUserRolesAndDefaultRoleAsync();
+        Task<UpdateRecordResult> UpdateDefaultRole(string roleId, string userId);
     }
 }

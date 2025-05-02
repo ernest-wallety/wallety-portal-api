@@ -1,6 +1,6 @@
-namespace Wallety.Portal.Api.Exceptions
+namespace Wallety.Portal.Api.Exceptions.CustomException
 {
-    public class CustomException : Exception
+    public class WalletyPortalCustomException : Exception
     {
         public string? AdditionalInfo { get; set; }
         public string? Type { get; set; }

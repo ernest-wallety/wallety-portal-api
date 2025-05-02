@@ -24,6 +24,18 @@ namespace Wallety.Portal.Infrastructure.Repository
             };
         }
 
+        public async Task<Pagination<CustomerEntity>> GetAllCustomers()
+        {
+            var query = new UsersQuery(null).GetCustomerQuery();
+            var items = await _sqlContext.SelectQuery<CustomerEntity>(query, null);
+
+            return new Pagination<CustomerEntity>
+            {
+                Items = [.. items],
+                Count = items.ToList().Count
+            };
+        }
+
         public async Task<Pagination<CustomerVerifyEntity>> GetUnverifiedCustomers(BaseListCriteria criteria)
         {
             var query = new CustomerVerificationQuery(criteria).Query();

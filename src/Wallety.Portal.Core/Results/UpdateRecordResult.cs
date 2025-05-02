@@ -12,9 +12,9 @@ namespace Wallety.Portal.Core.Results
             return new UpdateRecordResult() { IsSuccess = true, ResponseMessage = message };
         }
 
-        public static UpdateRecordResult Error(Exception ex)
+        public static UpdateRecordResult Error(string message)
         {
-            return new UpdateRecordResult() { IsSuccess = false, ResponseMessage = ex.Message };
+            return new UpdateRecordResult() { IsSuccess = false, ResponseMessage = message };
         }
     }
 }

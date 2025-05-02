@@ -16,7 +16,7 @@ namespace Wallety.Portal.Infrastructure.Repository
         private readonly IPgSqlSelector _sqlContext = sqlContext;
         private readonly ICachingInMemoryService _cachingInMemoryService = cachingInMemoryService;
 
-        public async Task<Pagination<UserEntity>> GetAllUsers(BaseListCriteria criteria)
+        public async Task<Pagination<UserEntity>> GetUsers(BaseListCriteria criteria)
         {
             var query = new UsersQuery(criteria).Query();
             var items = await _sqlContext.SelectQuery<UserEntity>(query, criteria);
@@ -32,9 +32,34 @@ namespace Wallety.Portal.Infrastructure.Repository
 
         public Task<UserEntity?> GetUserById(Guid id) => GetUserAsync(UsersQuery.GetUserByIdQuery(), new { Id = id.ToString() });
 
+        public Task<UserEntity?> GetUserByEmail(string? email) => GetUserAsync(UsersQuery.GetUserByEmailQuery(), new { Email = _cachingInMemoryService.Get<string>("Email") ?? email });
+
         public Task<UserEntity?> GetUserByCellNumber() => GetUserAsync(UsersQuery.GetUserByCellNumberQuery(), new { PhoneNumber = _cachingInMemoryService.Get<string>("PhoneNumber") });
 
-        public Task<UserEntity?> GetUserByEmail() => GetUserAsync(UsersQuery.GetUserByEmailQuery(), new { Email = _cachingInMemoryService.Get<string>("Email") });
+        public async Task<DataList<UserRoleEntity>> GetUserRoles(string? id)
+        {
+            var query = UsersQuery.GetUserRolesQuery();
+            var items = await _sqlContext.SelectQuery<UserRoleEntity>(query, new { UserId = _cachingInMemoryService.Get<string?>("LoggedInUserId") ?? id });
+
+            return new DataList<UserRoleEntity> { Items = [.. items], Count = items.Count };
+        }
+
+        public async Task<DataList<UserRoleEntity>> GetRoles()
+        {
+            var query = UsersQuery.GetRolesQuery();
+            var items = await _sqlContext.SelectQuery<UserRoleEntity>(query, null);
+
+            return new DataList<UserRoleEntity> { Items = [.. items], Count = items.Count };
+
+        }
+
+        public async Task<DataList<UserSessionEntity>> GetUserSession(string id)
+        {
+            var query = UsersQuery.GetUserSessionQuery();
+            var items = await _sqlContext.SelectQuery<UserSessionEntity>(query, new { UserId = _cachingInMemoryService.Get<string?>("LoggedInUserId") ?? id });
+
+            return new DataList<UserSessionEntity> { Items = [.. items], Count = items.Count };
+        }
 
         public Task<DeleteRecordResult> DeleteUser(int id)
         {
@@ -45,6 +70,50 @@ namespace Wallety.Portal.Infrastructure.Repository
         {
             throw new NotImplementedException();
         }
+
+        public async Task<CreateRecordResult> CreateUserSession(UserSessionEntity entity)
+        {
+            var parameters = new
+            {
+                p_result_message = default(string),
+                p_is_error = default(bool),
+
+                p_session_token = entity.UserId,
+                p_user_id = entity.SessionToken
+            };
+
+            var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
+                "user_session_start",
+                parameters
+            );
+
+            if (result?.p_is_error == true) return CreateRecordResult.Error(result?.p_result_message);
+
+            return CreateRecordResult.Successs(result?.p_result_message);
+        }
+
+        public async Task<UpdateRecordResult> UpdateUserSession(UserSessionEntity entity)
+        {
+            var parameters = new
+            {
+                p_result_message = default(string),
+                p_is_error = default(bool),
+
+                p_user_id = entity.SessionToken,
+                p_is_active = entity.IsActive,
+                p_is_auto_logout = entity.IsAutoLogout
+            };
+
+            var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
+                "user_session_end",
+                parameters
+            );
+
+            if (result?.p_is_error == true) return UpdateRecordResult.Error(result?.p_result_message);
+
+            return UpdateRecordResult.Successs(result?.p_result_message);
+        }
+
 
         public Task<UpdateRecordResult> UpdateUser(UserEntity user)
         {
@@ -66,6 +135,8 @@ namespace Wallety.Portal.Infrastructure.Repository
             var parameters = new
             {
                 p_result_message = default(string),
+                p_is_error = default(bool),
+
                 p_email = model.Email,
                 p_new_password = model.NewPassword,
                 p_user_id = model.UserId,
@@ -77,6 +148,8 @@ namespace Wallety.Portal.Infrastructure.Repository
                 parameters
             );
 
+            if (result?.p_is_error == true) return UpdateRecordResult.Error(result?.p_result_message);
+
             return UpdateRecordResult.Successs(result?.p_result_message);
         }
 
@@ -85,6 +158,7 @@ namespace Wallety.Portal.Infrastructure.Repository
             var parameters = new
             {
                 p_result_message = default(string),
+                p_is_error = default(bool),
 
                 p_name = model.Name,
                 p_surname = model.Surname,
@@ -98,18 +172,18 @@ namespace Wallety.Portal.Infrastructure.Repository
                 parameters
             );
 
+            if (result?.p_is_error == true) return UpdateRecordResult.Error(result?.p_result_message);
+
             return UpdateRecordResult.Successs(result?.p_result_message);
         }
 
-        public async Task<UpdateRecordResult> UpdateDefaultRole(string roleName)
+        public async Task<UpdateRecordResult> UpdateDefaultRole(string roleId, string userId)
         {
-            var userId = _cachingInMemoryService.Get<string>("UserId");
-
             var parameters = new
             {
                 p_result_message = default(string),
-
-                p_role_name = roleName,
+                p_is_error = default(bool),
+                p_role_id = roleId,
                 p_user_id = userId
             };
 
@@ -117,6 +191,8 @@ namespace Wallety.Portal.Infrastructure.Repository
                "default_role_update",
                parameters
            );
+
+            if (result?.p_is_error == true) return UpdateRecordResult.Error(result?.p_result_message);
 
             return UpdateRecordResult.Successs(result?.p_result_message);
         }

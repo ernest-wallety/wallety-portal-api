@@ -1,6 +1,6 @@
 namespace Wallety.Portal.Application.Response
 {
-    public class TransactionHistoryReponse
+    public class TransactionHistoryResponse
     {
         public Guid? TransactionHistoryId { get; set; }
 

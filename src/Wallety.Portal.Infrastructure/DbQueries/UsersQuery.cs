@@ -299,6 +299,43 @@ namespace Wallety.Portal.Infrastructure.DbQueries
 
             return query;
         }
+
+        public static string GetUserRolesQuery()
+        {
+            var query = $@"
+                SELECT
+
+                    r.""Id"" AS RoleId,
+                    r.""Name"" AS RoleName,
+                    r.""RoleCode"",    
+                    ur.""IsDefault""
+
+                FROM ""AspNetUserRoles"" ur
+                LEFT JOIN ""AspNetRoles"" r ON r.""Id"" = ur.""RoleId""
+                
+                WHERE ur.""UserId"" = @UserId
+            ";
+
+            return query;
+        }
+
+        public static string GetRolesQuery()
+        {
+            var query = $@"
+                SELECT * FROM ""AspNetRoles""
+            ";
+
+            return query;
+        }
+
+        public static string GetUserSessionQuery()
+        {
+            var query = $@"
+                SELECT * FROM ""UserSessions"" WHERE ""WalletyUserId"" = @UserId
+            ";
+
+            return query;
+        }
         #endregion
     }
 }

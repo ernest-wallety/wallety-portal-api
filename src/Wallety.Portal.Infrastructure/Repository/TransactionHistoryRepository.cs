@@ -10,7 +10,7 @@ namespace Wallety.Portal.Infrastructure.Repository
     {
         private readonly IPgSqlSelector _sqlContext = sqlContext;
 
-        public async Task<Pagination<TransactionHistoryEntity>> GetAllTransactions(BaseListCriteria criteria)
+        public async Task<Pagination<TransactionHistoryEntity>> GetTransactions(BaseListCriteria criteria)
         {
             var query = new TransactionHistoryQuery(criteria).Query();
 

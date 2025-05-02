@@ -114,7 +114,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                         WHEN x.""TransactionTypeId"" in ('{TransactionTypeConstants.PLEASE_PAY_ME}', '{TransactionTypeConstants.TOP_ME_UP}')
                         THEN 'Request of money from ' || COALESCE(x.""PayerWhatsappNumber"", x.""Phonber"", '')
 
-                        WHEN x.""TransactionTypeId"" = '{TransactionTypeConstants.WALLET_Y_DEPOSIT}'
+                        WHEN x.""TransactionTypeId"" = '{TransactionTypeConstants.WALLETY_DEPOSIT}'
                         THEN 'Top up of account balance' 
                         
                         WHEN x.""TransactionTypeId"" = '{TransactionTypeConstants.MONEY_TRANSFER}'

@@ -13,7 +13,7 @@ namespace Wallety.Portal.Infrastructure.Repository
         private readonly IPgSqlSelector _sqlContext = sqlContext;
         private readonly ICachingInMemoryService _cachingInMemoryService = cachingInMemoryService;
 
-        public async Task<List<MenuItemEntity>> GetMenus()
+        public async Task<DataList<MenuItemEntity>> GetMenus()
         {
             string? email = _cachingInMemoryService.Get<string>("Email");
 
@@ -24,7 +24,7 @@ namespace Wallety.Portal.Infrastructure.Repository
                 new { email = email }
             );
 
-            return [.. items];
+            return new DataList<MenuItemEntity> { Items = [.. items] };
         }
     }
 }

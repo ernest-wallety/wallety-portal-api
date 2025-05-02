@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace Wallety.Portal.Api.Exceptions
+namespace Wallety.Portal.Api.Exceptions.CustomException
 {
     public class ErrorTitleProvider
     {

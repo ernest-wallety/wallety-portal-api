@@ -4,7 +4,7 @@ namespace Wallety.Portal.Core.Results
     {
         public Guid? ReturnRecordId { get; set; }
         public bool IsSuccess { get; set; }
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
 
         public CreateRecordResult() { }
 
@@ -13,9 +13,9 @@ namespace Wallety.Portal.Core.Results
             return new CreateRecordResult() { IsSuccess = true, ReturnRecordId = id };
         }
 
-        public static CreateRecordResult Error(Exception ex)
+        public static CreateRecordResult Error(string message)
         {
-            return new CreateRecordResult() { IsSuccess = false, ErrorMessage = ex.Message };
+            return new CreateRecordResult() { IsSuccess = false, ErrorMessage = message };
         }
     }
 }
