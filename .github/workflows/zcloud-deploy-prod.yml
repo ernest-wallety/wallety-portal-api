@@ -37,4 +37,4 @@ jobs:
       - name: Deploy with Quave Cloud CLI
         env:
           ZCLOUD_USER_TOKEN: ${{ secrets.ZCLOUD_USER_TOKEN }}
-        run: zcloud deploy --env "wallety-wallety-portal-api-staging" --dir "."
+        run: zcloud deploy --env "wallety-wallety-portal-api-production" --dir "."
