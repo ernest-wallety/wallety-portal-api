@@ -33,7 +33,7 @@ namespace Wallety.Portal.Api
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Values:SECRET_KEY"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET_KEY") ?? Configuration["Values:SECRET_KEY"]!))
                     };
 
                     options.Events = new JwtBearerEvents
