@@ -160,7 +160,7 @@ namespace Wallety.Portal.Infrastructure.Repository
             {
                 p_result_message = default(string),
                 p_is_error = default(bool),
-                p_return_record_id = default(string),
+                p_return_record_id = default(Guid),
 
                 p_email = model.Email,
                 p_new_password = model.NewPassword,

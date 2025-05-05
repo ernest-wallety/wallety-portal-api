@@ -72,7 +72,7 @@ namespace Wallety.Portal.Api.Controllers
         [HttpPost]
         [Route("OneTimePassword")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateCompanyPacakge([FromBody] PasswordResetDTO dto)
+        public async Task<IActionResult> OneTimePassword([FromBody] PasswordResetDTO dto)
         {
             var result = await _mediator.Send(new UpdateCommand<PasswordResetDTO, UpdateResponse>(dto));
 

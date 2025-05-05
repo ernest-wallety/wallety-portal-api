@@ -24,7 +24,9 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
         public async Task<UpdateResponse> Handle(UpdateCommand<PasswordResetDTO, UpdateResponse> request, CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetUserByEmail() ?? throw new KeyNotFoundException("User does not exist.");
+            var existingUser = await _userRepository.GetUserByEmail(request.Item.Email) ?? throw new KeyNotFoundException("User does not exist.").WithDisplayData(EnumValidationDisplay.Toastr);
+
+            var newPassword = request.Item.NewPassword!;
 
             var response = new UpdateRecordResult();
 
@@ -37,7 +39,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
                         OneTimePasswordGuid = Guid.NewGuid(),
                         Email = request.Item.Email,
                         OldPassword = existingUser.PasswordHash,
-                        NewPassword = CryptoUtil.HashMultiple(request.Item.NewPassword!, existingUser.SecurityStamp),
+                        NewPassword = CryptoUtil.HashMultiple(newPassword!, existingUser.SecurityStamp),
                         Salt = existingUser.SecurityStamp
                     });
             }
@@ -50,7 +52,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
                {
                    Subject = "Reset Password",
                    ToField = request.Item.Email!,
-                   Body = PasswordGeneratorTemplate.GenerateHTML(request.Item.Email!, request.Item.NewPassword!),
+                   Body = PasswordGeneratorTemplate.GenerateHTML(request.Item.Email!, newPassword),
                    FromName = "Wallety"
                });
 
