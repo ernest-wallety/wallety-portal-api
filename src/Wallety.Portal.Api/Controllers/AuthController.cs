@@ -69,7 +69,7 @@ namespace Wallety.Portal.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut]
+        [HttpPost]
         [Route("OneTimePassword")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateCompanyPacakge([FromBody] PasswordResetDTO dto)
