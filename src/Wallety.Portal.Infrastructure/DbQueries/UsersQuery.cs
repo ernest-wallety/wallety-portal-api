@@ -132,7 +132,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
 
                 {MainSelect()} 
 
-                WHERE u.""Email"" = @Email  AND r.""Id"" != '{RoleConstants.CUSTOMER}'
+                WHERE u.""Email"" = @Email AND role_info.""Id"" != '{RoleConstants.CUSTOMER}'
 
                 GROUP BY 
                     u.""Id"", 
