@@ -3,6 +3,8 @@ using Wallety.Portal.Application.Commands;
 using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Response.General;
 using Wallety.Portal.Core.Entity.User;
+using Wallety.Portal.Core.Enum;
+using Wallety.Portal.Core.Helpers;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Services;
 
@@ -28,7 +30,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
             var response = await _repository.UpdateUserSession(item);
 
             if (!response.IsSuccess)
-                throw new Exception(response.ResponseMessage);
+                throw new Exception(response.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
 
             return LazyMapper.Mapper.Map<UpdateResponse>(response);
 

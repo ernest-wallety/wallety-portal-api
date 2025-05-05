@@ -4,6 +4,8 @@ using Wallety.Portal.Application.Dto.User;
 using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Response.General;
 using Wallety.Portal.Core.Entity;
+using Wallety.Portal.Core.Enum;
+using Wallety.Portal.Core.Helpers;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Requests.User;
 using Wallety.Portal.Core.Results;
@@ -40,6 +42,9 @@ namespace Wallety.Portal.Application.Handlers.Auth
                     });
             }
 
+            if (!response.IsSuccess)
+                throw new Exception(response.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
+
             var mailResponse = await _mailRepository.CreateMessageLogRecord(
                new MessageLogEntity
                {
@@ -49,8 +54,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
                    FromName = "Wallety"
                });
 
-            if (mailResponse.IsSuccess)
-                response = UpdateRecordResult.Successs("Password successfully reset!");
+            if (!mailResponse.IsSuccess) throw new Exception(mailResponse.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
 
             return LazyMapper.Mapper.Map<UpdateResponse>(response);
         }
