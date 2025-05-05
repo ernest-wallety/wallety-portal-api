@@ -46,7 +46,7 @@ namespace Wallety.Portal.Api.Controllers
                     LookupTableName = LookupTableSchema.RegistrationStatusTable,
                     LookupPrimaryKey = LookupTableSchema.RegistrationStatusPrimaryKey,
                     LookupName = LookupTableSchema.RegistrationStatusName,
-                    UseCustomQuery = true,
+                    IsFilter = isFilter
                 }
             ));
 
@@ -100,7 +100,8 @@ namespace Wallety.Portal.Api.Controllers
                {
                    LookupTableName = LookupTableSchema.AspNetRolesTable,
                    LookupPrimaryKey = LookupTableSchema.AspNetRolesPrimaryKey,
-                   LookupName = LookupTableSchema.AspNetRolesName
+                   LookupName = LookupTableSchema.AspNetRolesName,
+                   IsFilter = isFilter
                }
            ));
 

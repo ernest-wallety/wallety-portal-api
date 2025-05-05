@@ -63,7 +63,7 @@ namespace Wallety.Portal.Api.Controllers
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RefreshUser()
         {
-            var result = await _mediator.Send(new GetLoginCredentialsQuery { SessionToken = Request.Headers["Authorization"].ToString() });
+            var result = await _mediator.Send(new GetLoginCredentialsQuery());
 
             return Ok(ReturnSuccessModel<LoginResponse>(result, "User refreshed successfully!", (int)HttpStatusCode.OK, true, 0));
         }

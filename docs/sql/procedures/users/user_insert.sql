@@ -2,15 +2,15 @@ CREATE OR REPLACE PROCEDURE public.user_insert(
 	OUT p_result_message text,
 	OUT p_is_error boolean,
 	OUT p_return_record_id uuid,
-
 	IN p_name text,
 	IN p_surname text,
-    IN p_phone_number text,
-    IN p_phone_number_confirmed boolean,
-    IN p_username text,
-    IN p_email text,
-    IN p_password_hash text,
-    IN p_role_id text)
+	IN p_phone_number text,
+	IN p_phone_number_confirmed boolean,
+	IN p_username text,
+	IN p_email text,
+	IN p_password_hash text,
+    IN p_security_stamp text,
+	IN p_role_id text)
 LANGUAGE plpgsql
 AS $BODY$
 -- =============================================
@@ -24,15 +24,64 @@ BEGIN
     p_is_error := FALSE;
 
     INSERT INTO "AspNetUsers"
-    ("Id", "Name", "Surname", "PhoneNumber", "PhoneNumberConfirmed", "UserName", "Email", "AccountCreationDate", "PasswordHash")
+    (
+        "Id",
+        "Name",
+        "Surname",
+        "PhoneNumber",
+        "PhoneNumberConfirmed",
+        "UserName",
+        "Email",
+        "AccountCreationDate",
+        "PasswordHash",
+        "SecurityStamp",
+        "AccountNumber",
+        "IsAccountActive",
+        "CoummunicationConsent",
+        "VerifyAttempts",
+        "IsFrozen",
+        "IsVerified",
+        "EmailConfirmed",
+        "TwoFactorEnabled",
+        "LockoutEnabled",
+        "AccessFailedCount"
+    )
     VALUES
-    (uuid_generate_v4(), p_name, p_surname, p_phone_number, p_phone_number_confirmed, p_username, p_email, v_now, p_password_hash)
+    (
+        uuid_generate_v4(),
+        p_name, p_surname,
+        p_phone_number,
+        p_phone_number_confirmed,
+        p_username,
+        p_email,
+        v_now,
+        p_password_hash,
+        p_security_stamp,
+        '',
+        TRUE,
+        FALSE,
+        3,
+        FALSE,
+        FALSE,
+        FALSE,
+        FALSE,
+        TRUE,
+        0
+    )
     RETURNING "Id" INTO p_return_record_id;
 
     INSERT INTO "AspNetUserRoles"
-    ("UserId", "RoleId", "IsDefault")
+    (
+        "UserId",
+        "RoleId",
+        "IsDefault"
+        )
     VALUES
-    (p_return_record_id, p_role_id, TRUE);
+    (
+        p_return_record_id,
+        p_role_id,
+        TRUE
+    );
 
     p_result_message := 'User created successfully.';
 

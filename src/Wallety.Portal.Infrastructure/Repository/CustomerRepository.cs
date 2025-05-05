@@ -1,14 +1,19 @@
 using Wallety.Portal.Core.Entity.Customer;
 using Wallety.Portal.Core.Repository;
+using Wallety.Portal.Core.Requests.Customer;
+using Wallety.Portal.Core.Results;
 using Wallety.Portal.Core.Services;
 using Wallety.Portal.Core.Specs;
 using Wallety.Portal.Infrastructure.DbQueries;
 
 namespace Wallety.Portal.Infrastructure.Repository
 {
-    public class CustomerRepository(IPgSqlSelector sqlContext) : ICustomerRepository
+    public class CustomerRepository(
+        IPgSqlSelector sqlContext,
+        ICachingInMemoryService cachingInMemoryService) : ICustomerRepository
     {
         private readonly IPgSqlSelector _sqlContext = sqlContext;
+        private readonly ICachingInMemoryService _cachingInMemoryService = cachingInMemoryService;
 
         public async Task<Pagination<CustomerEntity>> GetCustomers(BaseListCriteria criteria)
         {
@@ -49,5 +54,30 @@ namespace Wallety.Portal.Infrastructure.Repository
                 Count = items.ToList().Count
             };
         }
+
+        public async Task<CreateRecordResult> VerifyCustomerAccount(CustomerVerificationModel model)
+        {
+            var parameters = new
+            {
+                p_result_message = default(string),
+                p_is_error = default(bool),
+                p_return_record_id = default(Guid),
+
+                p_logged_in_user_id = _cachingInMemoryService.Get<string?>("LoggedInUserId"),
+                p_customer_id = model.CustomerId,
+                p_registration_status_id = Guid.Parse(model.RegistrationStatusId),
+                p_verification_reject_reason_id = Guid.Parse(model.VerificationRejectReasonId),
+            };
+
+            var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
+                "customer_verify_account_insert",
+                parameters
+            );
+
+            if (result?.p_is_error == true) return CreateRecordResult.Error(result?.p_result_message);
+
+            return CreateRecordResult.Successs(result!.p_return_record_id, result!.p_result_message);
+        }
+
     }
 }

@@ -18,12 +18,13 @@ namespace Wallety.Portal.Api.Exceptions
                 Status = httpContext.Response.StatusCode,
                 Extensions =
                 {
-                    ["TraceID"] = Guid.NewGuid().ToString(),
-                    ["Raw"] = ex.ToString(),
-                    ["IsError"] = true,
-                    ["ErrorDisplay"] = EnumValidationDisplay.Popup,
-                    ["ShowException"] = true,
-                    ["ErrorList"] = new List<string>() { ex.Message },
+                    ["traceID"] = Guid.NewGuid().ToString(),
+                    ["raw"] = ex.ToString(),
+                    ["isError"] = true,
+                    ["errorDisplay"] = ex.Data["errorDisplay"] ?? EnumValidationDisplay.Popup,
+                    ["showException"] = true,
+                    ["errorList"] = new List<string>() { ex.Message },
+                    ["isException"] = true
                 }
             };
 

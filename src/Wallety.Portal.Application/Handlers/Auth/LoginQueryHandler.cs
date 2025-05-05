@@ -8,6 +8,8 @@ using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Response.Auth;
 using Wallety.Portal.Application.Response.User;
 using Wallety.Portal.Core.Entity.User;
+using Wallety.Portal.Core.Enum;
+using Wallety.Portal.Core.Helpers;
 using Wallety.Portal.Core.Helpers.Constants;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Services;
@@ -29,11 +31,11 @@ namespace Wallety.Portal.Application.Handlers.Auth
         public async Task<LoginResponse> Handle(CreateLoginCommand request, CancellationToken cancellationToken)
         {
             var existingUser = await _repository.GetUserByEmail(request.Email)
-                ?? throw new ArgumentException("The provided email or username is invalid.");
+                ?? throw new ArgumentException("The provided email or username is invalid.").WithDisplayData(EnumValidationDisplay.Toastr);
 
             bool isPasswordVerified = CryptoUtil.VerifyPassword(request.Password, existingUser.SecurityStamp!, existingUser.PasswordHash);
 
-            if (!isPasswordVerified) throw new UnauthorizedAccessException("Password is incorrect.");
+            if (!isPasswordVerified) throw new UnauthorizedAccessException("Password is incorrect.").WithDisplayData(EnumValidationDisplay.Toastr);
 
             var expiryDate = DateTime.Now.AddDays(1);
 
@@ -71,7 +73,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
             });
 
             if (!sessionResponse.IsSuccess)
-                throw new Exception(sessionResponse.ResponseMessage);
+                throw new Exception(sessionResponse.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
 
             return responseLogin;
         }
@@ -105,7 +107,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
             {
                 var result = await _repository.UpdateDefaultRole(roleId, existingUser.UserId);
 
-                if (!result.IsSuccess) throw new Exception(result.ResponseMessage);
+                if (!result.IsSuccess) throw new Exception(result.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
             }
 
             return roleId;

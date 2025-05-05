@@ -2,6 +2,8 @@ using MediatR;
 using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Queries.General;
 using Wallety.Portal.Application.Response.Menu;
+using Wallety.Portal.Core.Entity.Menu;
+using Wallety.Portal.Core.Helpers;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Specs;
 
@@ -22,9 +24,7 @@ namespace Wallety.Portal.Application.Handlers
 
             var menuList = await _menuRepository.GetMenus();
 
-            var menuResponseList = LazyMapper.Mapper.Map<List<MenuItemResponse>>(menuList);
-
-            var items = menuResponseList
+            var items = menuList.Items
                            .GroupBy(m => new
                            {
                                m.ModuleId,
@@ -34,7 +34,7 @@ namespace Wallety.Portal.Application.Handlers
                                m.ModuleRoute,
                                m.ModuleSidebarClass
                            })
-                           .Select(g => new MenuResponse
+                           .Select(g => new MenuEntity
                            {
                                ModuleId = g.Key.ModuleId,
                                ModuleIcon = g.Key.ModuleIcon,
@@ -44,13 +44,12 @@ namespace Wallety.Portal.Application.Handlers
                                ModuleSidebarClass = g.Key.ModuleSidebarClass,
 
                                ModuleItems = g.Any(m => m.ModuleItemId != Guid.Empty)
-                                   ? g.Where(m => m.ModuleItemId != Guid.Empty).ToList()
+                                   ? [.. g.Where(m => m.ModuleItemId != Guid.Empty)]
                                    : null!
-                           })
-                           .ToList();
+                           }).ToDataList();
 
 
-            return new DataList<MenuResponse> { Items = items, Count = items.Count };
+            return LazyMapper.Mapper.Map<DataList<MenuResponse>>(items);
         }
     }
 }

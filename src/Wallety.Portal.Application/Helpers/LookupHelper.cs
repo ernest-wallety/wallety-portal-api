@@ -16,6 +16,7 @@ namespace Wallety.Portal.Application.Helpers
                 .Select(u =>
                 {
                     u.PrimaryKey = u.Id?.ToString()!;
+                    u.Id = EncryptionHelper.Encrypt(u.Id?.ToString()!);
                     return u;
                 })
                 .ToList();

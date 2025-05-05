@@ -81,11 +81,12 @@ namespace Wallety.Portal.Infrastructure.Repository
                 p_username = entity.Username,
                 p_email = entity.Email,
                 p_password_hash = entity.PasswordHash,
+                p_security_stamp = entity.SecurityStamp,
                 p_role_id = entity.RoleId,
             };
 
             var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
-                "user_session_insert",
+                "user_insert",
                 parameters
             );
 

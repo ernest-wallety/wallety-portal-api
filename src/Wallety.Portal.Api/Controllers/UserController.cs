@@ -18,7 +18,7 @@ namespace Wallety.Portal.Api.Controllers
         private readonly IMediator _mediator = mediator;
         private readonly ILogger _logger = logger;
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("List")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
@@ -29,7 +29,7 @@ namespace Wallety.Portal.Api.Controllers
             return Ok(ReturnSuccessModel<Pagination<UserResponse>>(result));
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("Get")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
@@ -41,24 +41,24 @@ namespace Wallety.Portal.Api.Controllers
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPost]
         [Route("UserRoleUpdate")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateCompanyPacakge([FromBody] UserRoleUpdateDTO request)
+        public async Task<IActionResult> UserRoleUpdate([FromBody] UserRoleUpdateDTO request)
         {
             var result = await _mediator.Send(new UpdateCommand<UserRoleUpdateDTO, UpdateResponse>(request));
 
-            return Ok(ReturnSuccessModel<UpdateResponse>(result, $"Password reset email has been sent to {request.Email}!", (int)HttpStatusCode.OK, true, 0));
+            return Ok(ReturnSuccessModel<UpdateResponse>(result));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Create([FromBody] UserEntity request)
+        public async Task<IActionResult> Create([FromBody] UserRegistrationDTO request)
         {
-            var result = await _mediator.Send(new CreateCommand<UserEntity, UpdateResponse>(request));
+            var result = await _mediator.Send(new CreateCommand<UserRegistrationDTO, CreateResponse>(request));
 
-            return Ok(ReturnSuccessModel<UpdateResponse>(null, result.ResponseMessage!, (int)HttpStatusCode.OK, true, 0));
+            return Ok(ReturnSuccessModel<CreateResponse>(null, result.ResponseMessage!, (int)HttpStatusCode.OK, true, 0));
         }
     }
 }

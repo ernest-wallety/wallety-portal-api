@@ -2,9 +2,12 @@ using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Wallety.Portal.Application.Commands.General;
+using Wallety.Portal.Application.Dto.Customer;
 using Wallety.Portal.Application.Queries.General;
 using Wallety.Portal.Application.Response;
 using Wallety.Portal.Application.Response.Customer;
+using Wallety.Portal.Application.Response.General;
 using Wallety.Portal.Core.Specs;
 
 namespace Wallety.Portal.Api.Controllers
@@ -52,15 +55,11 @@ namespace Wallety.Portal.Api.Controllers
         [Authorize]
         [HttpPost("VerifyAccount")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> VerifyAccount()//CustomerVerificationDTO request)
+        public async Task<IActionResult> VerifyAccount(CustomerVerificationDTO request)
         {
-            // var response = await _customerVerificationRepository.VerifyCustomerAccountAsync(request, user);
+            var result = await _mediator.Send(new CreateCommand<CustomerVerificationDTO, CreateResponse>(request));
 
-            // var result = new UpdateResponseDTO() { IsSuccess = response.StatusCode == (HttpStatusCode)StatusCodes.Status200OK };
-
-            // return Ok(ReturnSuccessModel<UpdateResponseDTO>(result, response.ResponseMessage, (int)response.StatusCode, true, EnumValidationDisplay.Toastr));
-
-            return Ok("");
+            return Ok(ReturnSuccessModel<CreateResponse>(result, result.ResponseMessage!, (int)HttpStatusCode.OK, true, 0));
         }
     }
 }

@@ -1,5 +1,5 @@
-using System.Text.Json;
 using System.Web;
+using Newtonsoft.Json;
 using Wallety.Portal.Core.Requests.Common;
 using Wallety.Portal.Core.Specs;
 
@@ -15,7 +15,8 @@ namespace Wallety.Portal.Core.Helpers
 
             if (!string.IsNullOrEmpty(criteria.Lookups))
             {
-                lookups = [.. JsonSerializer.Deserialize<List<LookupModel>>(HttpUtility.UrlDecode(criteria.Lookups))
+                lookups = [.. JsonConvert
+                    .DeserializeObject<List<LookupModel>>(HttpUtility.UrlDecode(criteria.Lookups))
                     .Where(x => x.Id != null)];
 
                 foreach (var lookup in lookups)
@@ -43,7 +44,8 @@ namespace Wallety.Portal.Core.Helpers
 
             if (!string.IsNullOrEmpty(criteria.Ranges))
             {
-                ranges = [.. JsonSerializer.Deserialize<List<DateRangeModel>>(HttpUtility.UrlDecode(criteria.Ranges))
+                ranges = [.. JsonConvert
+                    .DeserializeObject<List<DateRangeModel>>(HttpUtility.UrlDecode(criteria.Ranges))
                     .Where(x => x.IsOnChange == true)];
             }
 

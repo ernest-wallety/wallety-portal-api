@@ -1,3 +1,6 @@
+using Wallety.Portal.Core.Enum;
+using Wallety.Portal.Core.Specs;
+
 namespace Wallety.Portal.Core.Helpers
 {
     public static class ExtensionMethods
@@ -32,6 +35,23 @@ namespace Wallety.Portal.Core.Helpers
             return [.. str
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim())];
+        }
+
+        public static T WithDisplayData<T>(this T ex, EnumValidationDisplay display) where T : Exception
+        {
+            ex.Data["errorDisplay"] = display;
+            return ex;
+        }
+
+        public static DataList<T> ToDataList<T>(this IEnumerable<T> source)
+            where T : class
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            var count = source.Count();
+            var items = source.ToList(); // Convert to List for IReadOnlyList
+
+            return new DataList<T>(count, items);
         }
     }
 }
