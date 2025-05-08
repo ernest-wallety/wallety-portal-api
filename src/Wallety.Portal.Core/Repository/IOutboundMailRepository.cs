@@ -6,5 +6,7 @@ namespace Wallety.Portal.Core.Repository
     public interface IOutboundMailRepository
     {
         Task<CreateRecordResult> CreateMessageLogRecord(MessageLogEntity entity);
+
+        Task<List<MessageLogTypeEntity>> GetMessageLogTypes();
     }
 }

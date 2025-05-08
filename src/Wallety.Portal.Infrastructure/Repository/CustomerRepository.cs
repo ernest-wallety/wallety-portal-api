@@ -41,6 +41,14 @@ namespace Wallety.Portal.Infrastructure.Repository
             };
         }
 
+        public async Task<List<VerificationRejectReasonsEntity>> GetVerificationRejectReasons()
+        {
+            var query = CustomerVerificationQuery.GetUnverifiedCustomersQuery();
+            var items = await _sqlContext.SelectQuery<VerificationRejectReasonsEntity>(query, null);
+
+            return [.. items];
+        }
+
         public async Task<Pagination<CustomerVerifyEntity>> GetUnverifiedCustomers(BaseListCriteria criteria)
         {
             var query = new CustomerVerificationQuery(criteria).Query();

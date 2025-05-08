@@ -7,6 +7,7 @@ using Wallety.Portal.Core.Entity;
 using Wallety.Portal.Core.Entity.User;
 using Wallety.Portal.Core.Enum;
 using Wallety.Portal.Core.Helpers;
+using Wallety.Portal.Core.Helpers.Constants;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Results;
 using Wallety.Portal.Core.Templates;
@@ -48,6 +49,9 @@ namespace Wallety.Portal.Application.Handlers.Users
             var mailResponse = await _mailRepository.CreateMessageLogRecord(
                 new MessageLogEntity
                 {
+                    MessageLogTypeId = (await _mailRepository.GetMessageLogTypes())
+                    .FirstOrDefault(x => x.MessageLogTypeCode == MessageTypeLogConstants.WATI)!
+                    .MessageLogTypeId,
                     Subject = "Reset Password",
                     ToField = request.Item?.Email!,
                     Body = PasswordGeneratorTemplate.GenerateHTML(request.Item?.Email!, newPassword!),

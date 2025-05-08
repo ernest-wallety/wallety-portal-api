@@ -28,5 +28,22 @@ namespace Wallety.Portal.Infrastructure.DbQueries
 
             return query;
         }
+
+        #region Select Queries
+        public static string GetMessageLogTypesQuery()
+        {
+            var query = $@"
+                SELECT
+
+                    id AS MessageLogTypeId,
+                    code AS MessageLogTypeCode,
+                    name AS MessageLogTypeName
+
+                FROM mail.message_log_type
+            ";
+
+            return query;
+        }
+        #endregion
     }
 }

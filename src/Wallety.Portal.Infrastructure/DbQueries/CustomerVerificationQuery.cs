@@ -127,6 +127,13 @@ namespace Wallety.Portal.Infrastructure.DbQueries
 
             return query;
         }
+
+        public static string GetUnverifiedCustomersQuery()
+        {
+            return $@"
+                SELECT * FROM ""VerificationRejectReasons""
+            ";
+        }
         #endregion
     }
 }

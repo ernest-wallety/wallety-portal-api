@@ -9,6 +9,8 @@ namespace Wallety.Portal.Core.Repository
     {
         Task<Pagination<CustomerEntity>> GetCustomers(BaseListCriteria criteria);
         Task<Pagination<CustomerEntity>> GetAllCustomers();
+
+        Task<List<VerificationRejectReasonsEntity>> GetVerificationRejectReasons();
         Task<Pagination<CustomerVerifyEntity>> GetUnverifiedCustomers(BaseListCriteria criteria);
         Task<CreateRecordResult> VerifyCustomerAccount(CustomerVerificationModel model);
     }

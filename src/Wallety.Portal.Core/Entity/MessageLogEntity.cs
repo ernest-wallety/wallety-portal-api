@@ -5,6 +5,7 @@ namespace Wallety.Portal.Core.Entity
     public class MessageLogEntity
     {
         public Guid? MessageLogId { get; set; }
+        public Guid? MessageLogTypeId { get; set; }
         public string Subject { get; set; }
         public string ToField { get; set; }
         public string CcField { get; set; }
