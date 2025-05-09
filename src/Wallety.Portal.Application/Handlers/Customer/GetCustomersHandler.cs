@@ -20,6 +20,8 @@ namespace Wallety.Portal.Application.Handlers.Customer
             var customers = await _repository.GetAllCustomers();
             int totalCustomers = customers.Items.Count;
 
+            var totalPendingKYC = await _repository.GetRejectedUnverifiedCustomers();
+
             var activityCounts = new Dictionary<string, int>
             {
                 { "Frequent", customers.Items.Count(x => x.LastActivityStatus == "Frequent") },
@@ -59,6 +61,7 @@ namespace Wallety.Portal.Application.Handlers.Customer
                 Customers = response,
                 TotalCustomers = totalCustomers,
                 TotalBalance = customers.Items.Select(x => x.UsableBalance).Sum(),
+                TotalPendingKYC = totalPendingKYC.Count,
                 ActivityData = activityData
             };
         }

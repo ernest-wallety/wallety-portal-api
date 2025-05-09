@@ -128,12 +128,30 @@ namespace Wallety.Portal.Infrastructure.DbQueries
             return query;
         }
 
-        public static string GetUnverifiedCustomersQuery()
+        public static string GetVerificationReasonsQuery()
         {
             return $@"
                 SELECT * FROM ""VerificationRejectReasons""
             ";
         }
+
+        public static string GetRejectedUnverifiedCustomers()
+        {
+            var query = $@"
+                {MainSelect()}
+
+                AND rs.""RegistrationStatusId"" IN (
+                    '{RegistrationStatusConstants.REJECTED}'
+                )
+
+                AND (u.""IdentityImage"" IS NULL OR u.""IdentityImage"" = '')
+
+                GROUP BY u.""Id"", c.""CountryId"", rs.""RegistrationStatusId""
+            ";
+
+            return query;
+        }
+
         #endregion
     }
 }

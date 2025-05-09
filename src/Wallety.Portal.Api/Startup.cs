@@ -1,8 +1,12 @@
+using System.IO.Compression;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Wallety.Portal.Api.dto;
@@ -24,6 +28,13 @@ namespace Wallety.Portal.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add compression services
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.Providers.Add<BrotliCompressionProvider>();
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -88,7 +99,16 @@ namespace Wallety.Portal.Api
                 ).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             }));
             services.AddMemoryCache();
-            services.AddControllers();
+
+            // JSON serialization (optimized for all environments)
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.WriteIndented = _env.IsDevelopment(); // Pretty print only in dev
+                });
+
             services.AddApiVersioning();
             services.AddHealthChecks();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallety Portal API", Version = "v1" }); });
@@ -162,6 +182,8 @@ namespace Wallety.Portal.Api
             }));
 
             app.UseHsts();
+
+            app.UseResponseCompression();
 
             app.UseAuthentication();
             app.UseRouting();
