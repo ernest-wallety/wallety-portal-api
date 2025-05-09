@@ -50,5 +50,35 @@ namespace Wallety.Portal.Core.Templates.Wati
 
             return JsonSerializer.Serialize(payload);
         }
+
+        public static string SendWalletySecure(string firstName)
+        {
+            var payload = new
+            {
+                template_name = "wallety_secure_v4",
+                broadcast_name = "wallety_secure_v4_broadcast",
+                parameters = new[]
+                {
+                    new { name = "name", value = $"{firstName}" }
+                }
+            };
+
+            return JsonSerializer.Serialize(payload);
+        }
+
+        public static string SendLoginTemplate(string id)
+        {
+            var payload = new
+            {
+                template_name = "user_login_v5",
+                broadcast_name = "user_login_v5_broadcast",
+                parameters = new[]
+                {
+                    new { name = "loginkey", value = $"{EncryptionHelper.Encrypt(id)}" }
+                }
+            };
+
+            return JsonSerializer.Serialize(payload);
+        }
     }
 }

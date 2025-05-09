@@ -41,7 +41,7 @@ namespace Wallety.Portal.Application.Handlers.Customer
             if (Guid.Parse(dto.RegistrationStatusId) == RegistrationStatusConstants.REJECTED)
                 await HandleRejectedCustomerAsync(dto, customerAccount);
             else
-                await SendSignUpMessageAsync(customerAccount);
+                await SendSignUpMessage(customerAccount);
 
             var response = await _customerRepository.VerifyCustomerAccount(dto);
             if (!response.IsSuccess)
@@ -50,6 +50,8 @@ namespace Wallety.Portal.Application.Handlers.Customer
             return LazyMapper.Mapper.Map<CreateResponse>(response);
         }
 
+
+        #region Send Rejected Message
         private async Task HandleRejectedCustomerAsync(CustomerVerificationModel dto, UserEntity customerAccount)
         {
             var rejectReason = (await _customerRepository.GetVerificationRejectReasons())
@@ -80,6 +82,22 @@ namespace Wallety.Portal.Application.Handlers.Customer
             });
         }
 
+        private async Task SendMessageWithCheckAsync(MessageLogEntity message)
+        {
+            var result = await _mailRepository.CreateMessageLogRecord(message);
+
+            if (!result.IsSuccess) throw new Exception(result.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
+        }
+        #endregion
+
+        #region Send SignUp Message
+        private async Task SendSignUpMessage(UserEntity customerAccount)
+        {
+            await SendSignUpMessageAsync(customerAccount);
+            await SendWalletySecure(customerAccount);
+            await SendLoginTemplate(customerAccount);
+        }
+
         private async Task SendSignUpMessageAsync(UserEntity customerAccount)
         {
             await _mailRepository.CreateMessageLogRecord(new MessageLogEntity
@@ -93,11 +111,31 @@ namespace Wallety.Portal.Application.Handlers.Customer
             });
         }
 
-        private async Task SendMessageWithCheckAsync(MessageLogEntity message)
+        private async Task SendWalletySecure(UserEntity customerAccount)
         {
-            var result = await _mailRepository.CreateMessageLogRecord(message);
-
-            if (!result.IsSuccess) throw new Exception(result.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
+            await _mailRepository.CreateMessageLogRecord(new MessageLogEntity
+            {
+                MessageLogTypeId = (await _mailRepository.GetMessageLogTypes())
+                    .FirstOrDefault(x => x.MessageLogTypeCode == MessageTypeLogConstants.WATI)!
+                    .MessageLogTypeId,
+                Subject = "Wati Service",
+                ToField = customerAccount.PhoneNumber,
+                Body = PayloadTemplates.SendWalletySecure(customerAccount.FirstName)
+            });
         }
+
+        private async Task SendLoginTemplate(UserEntity customerAccount)
+        {
+            await _mailRepository.CreateMessageLogRecord(new MessageLogEntity
+            {
+                MessageLogTypeId = (await _mailRepository.GetMessageLogTypes())
+                    .FirstOrDefault(x => x.MessageLogTypeCode == MessageTypeLogConstants.WATI)!
+                    .MessageLogTypeId,
+                Subject = "Wati Service",
+                ToField = customerAccount.PhoneNumber,
+                Body = PayloadTemplates.SendLoginTemplate(customerAccount.UserId)
+            });
+        }
+        #endregion
     }
 }
