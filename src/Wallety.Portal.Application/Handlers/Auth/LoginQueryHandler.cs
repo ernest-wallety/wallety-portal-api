@@ -33,7 +33,6 @@ namespace Wallety.Portal.Application.Handlers.Auth
             var existingUser = await _repository.GetUserByEmail(request.Email)
                 ?? throw new ArgumentException("The provided email or username is invalid.").WithDisplayData(EnumValidationDisplay.Toastr);
 
-
             bool isPasswordVerified = CryptoUtil.VerifyPassword(request.Password, existingUser.SecurityStamp!, existingUser.PasswordHash);
 
             if (!isPasswordVerified) throw new UnauthorizedAccessException("Password is incorrect.").WithDisplayData(EnumValidationDisplay.Toastr);
