@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Wallety.Portal.Core.Helpers;
 
 namespace Wallety.Portal.Core.Templates.Wati
 {
@@ -27,7 +28,7 @@ namespace Wallety.Portal.Core.Templates.Wati
                 broadcast_name = "update_customer_details_v5_broadcast",
                 parameters = new[]
                 {
-                    new { name = "key", value = $"{id}" }
+                    new { name = "key", value = $"{EncryptionHelper.Encrypt(id)}" }
                 }
             };
 
