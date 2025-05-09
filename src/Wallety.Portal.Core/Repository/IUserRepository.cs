@@ -11,10 +11,10 @@ namespace Wallety.Portal.Core.Repository
 
         Task<UserEntity?> GetUserById(Guid id);
         Task<UserEntity?> GetUserByEmail(string? email = null);
-        Task<UserEntity?> GetUserByCellNumber();
+        Task<UserEntity?> GetUserByCellNumber(string? phoneNumber = null);
         Task<DataList<UserRoleEntity>> GetUserRoles(string? id = null);
         Task<DataList<UserRoleEntity>> GetRoles();
-        Task<DataList<UserSessionEntity>> GetUserSession(string id);
+        Task<DataList<UserSessionEntity>> GetUserSession(string? id = null);
 
         Task<DeleteRecordResult> DeleteUser(int id);
 
