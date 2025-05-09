@@ -77,7 +77,17 @@ namespace Wallety.Portal.Api.Controllers
             var result = await _mediator.Send(new UpdateCommand<PasswordResetDTO, UpdateResponse>(dto));
 
             return Ok(ReturnSuccessModel<UpdateResponse>(result, $"Password reset email has been sent to {dto.Email}!", (int)HttpStatusCode.OK, true, 0));
-
         }
+
+        // IN CASE OF EMERGENCY, UNCOMMENT THIS METHOD
+        // [HttpPost]
+        // [Route("UpdatePassword")]
+        // [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
+        // public async Task<IActionResult> UpdatePassword([FromBody] string email)
+        // {
+        //     var result = await _mediator.Send(new UpdateCommand<string, UpdateResponse>(email));
+
+        //     return Ok(ReturnSuccessModel<UpdateResponse>(result, "Password updated!", (int)HttpStatusCode.OK, true, 0));
+        // }
     }
 }

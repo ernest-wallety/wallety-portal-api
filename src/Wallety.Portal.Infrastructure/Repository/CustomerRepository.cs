@@ -74,7 +74,7 @@ namespace Wallety.Portal.Infrastructure.Repository
                 p_logged_in_user_id = _cachingInMemoryService.Get<string?>("LoggedInUserId"),
                 p_customer_id = model.CustomerId,
                 p_registration_status_id = Guid.Parse(model.RegistrationStatusId),
-                p_verification_reject_reason_id = Guid.Parse(model.VerificationRejectReasonId),
+                p_verification_reject_reason_id = !string.IsNullOrEmpty(model.VerificationRejectReasonId) ? Guid.Parse(model.VerificationRejectReasonId) : (Guid?)null
             };
 
             var result = await _sqlContext.ExecuteStoredProcedureAsync<dynamic>(
