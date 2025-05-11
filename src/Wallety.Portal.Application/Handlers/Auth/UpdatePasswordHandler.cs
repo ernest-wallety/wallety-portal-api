@@ -27,7 +27,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
                         Email = request.Item,
                         OldPassword = existingUser.PasswordHash,
                         // SET THE DESIRED PASSWORD
-                        NewPassword = CryptoUtil.HashMultiple("O8j4,Ku?", existingUser.SecurityStamp),
+                        NewPassword = CryptoUtil.HashMultiple("", existingUser.SecurityStamp),
                         Salt = existingUser.SecurityStamp
                     });
 
