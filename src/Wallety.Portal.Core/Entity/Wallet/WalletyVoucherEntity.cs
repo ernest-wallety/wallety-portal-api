@@ -10,5 +10,8 @@ namespace Wallety.Portal.Core.Entity.Wallet
         public decimal PreviousWalletBalance { get; set; }
         public decimal TransactionAmount { get; set; }
         public decimal VoucherAmount { get; set; }
+
+        public string? RedeemedVoucherPin { get; set; }
+        public decimal NewBalance { get; set; }
     }
 }

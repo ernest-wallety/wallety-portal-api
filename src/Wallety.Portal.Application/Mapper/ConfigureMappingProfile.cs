@@ -1,4 +1,5 @@
 using AutoMapper;
+using Wallety.Portal.Application.Dto;
 using Wallety.Portal.Application.Dto.User;
 using Wallety.Portal.Application.Response;
 using Wallety.Portal.Application.Response.Customer;
@@ -9,6 +10,7 @@ using Wallety.Portal.Core.Entity;
 using Wallety.Portal.Core.Entity.Customer;
 using Wallety.Portal.Core.Entity.Menu;
 using Wallety.Portal.Core.Entity.User;
+using Wallety.Portal.Core.Requests;
 using Wallety.Portal.Core.Requests.Common;
 using Wallety.Portal.Core.Requests.User;
 using Wallety.Portal.Core.Results;
@@ -62,6 +64,8 @@ namespace Wallety.Portal.Application.Mapper
             CreateMap<Pagination<CustomerVerifyEntity>, Pagination<CustomerVerifyResponse>>().ReverseMap();
             CreateMap<CustomerVerifyEntity, CustomerVerifyResponse>().ReverseMap();
 
+            // Wallet
+            CreateMap<CreditWalletModel, CreditWalletDTO>().ReverseMap();
         }
     }
 }

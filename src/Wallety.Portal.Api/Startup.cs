@@ -147,6 +147,8 @@ namespace Wallety.Portal.Api
                 return new PgSqlSelector(conString!);
             });
 
+            services.AddScoped<ICustomerPortalService, CustomerPortalService>();
+
             //service cache
             services.AddScoped<ICachingInMemoryService, CachingInMemoryService>();
 

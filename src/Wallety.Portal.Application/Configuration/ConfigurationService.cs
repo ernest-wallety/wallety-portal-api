@@ -33,6 +33,13 @@ namespace Wallety.Portal.Application.Configuration
             return int.TryParse(creditLimit, out var result) ? result : 50000;
         }
 
+        public string CustomerPortalApi()
+        {
+            return Environment.GetEnvironmentVariable("CUSTOMER_PORTAL_API")
+                ?? GetValue("CUSTOMER_PORTAL_API");
+        }
+
+
         private string GetValue(string configName)
         {
             return _configuration.GetValue<string>($"Values:{configName}")!;

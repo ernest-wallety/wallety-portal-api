@@ -6,5 +6,6 @@ namespace Wallety.Portal.Core.Services
         string ConnectionString();
         string SecretKey();
         int CreditLimit();
+        string CustomerPortalApi();
     }
 }

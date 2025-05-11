@@ -26,7 +26,8 @@ namespace Wallety.Portal.Api.Controllers
                 StatusCode = statusCode,
                 ErrorDisplay = errorDisplay,
                 ShowSuccess = showSuccess,
-                ShowError = showError
+                ShowError = showError,
+                IsError = false
             };
         }
     }

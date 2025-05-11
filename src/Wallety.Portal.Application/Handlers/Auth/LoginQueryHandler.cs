@@ -62,7 +62,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
             // existingUser.LoginTimeStamp = DateTime.Now;
             // existingUser.UpdatedBy = $"{existingUser.FirstName} {existingUser.Surname}";
 
-            SetUserInCache(existingUser!, responseLogin);
+            SetUserInCache(existingUser!, responseLogin, request.Password);
 
             // Update the user with token, user session and expiry date
             // await _repository.UpdateUser(existingUser!);
@@ -147,13 +147,14 @@ namespace Wallety.Portal.Application.Handlers.Auth
             };
         }
 
-        private void SetUserInCache(UserEntity existingUser, LoginResponse responseLogin)
+        private void SetUserInCache(UserEntity existingUser, LoginResponse responseLogin, string password)
         {
             _caching.Set("Email", existingUser.Email, TimeSpan.FromDays(1));
             _caching.Set("PhoneNumber", existingUser.Email, TimeSpan.FromDays(1));
             _caching.Set("Token", responseLogin.SessionToken, TimeSpan.FromDays(1));
             _caching.Set("LoggedInUserId", existingUser.UserId, TimeSpan.FromDays(1));
             _caching.Set(responseLogin.SessionToken!, responseLogin, TimeSpan.FromDays(1));
+            _caching.Set("Password", password, TimeSpan.FromDays(1));
         }
         #endregion
     }

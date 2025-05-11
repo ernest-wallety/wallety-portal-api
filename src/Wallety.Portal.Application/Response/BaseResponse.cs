@@ -9,10 +9,12 @@ namespace Wallety.Portal.Application.Response
             ShowError = true;
             ErrorDisplay = EnumValidationDisplay.Popup;
             ShowSuccess = false;
+            IsError = false;
             ResponseMessage = "Success";
         }
 
         public object? Data { get; set; }
+        public bool IsError { get; set; }
         public bool ShowError { get; set; }
         public int StatusCode { get; set; }
         public bool ShowSuccess { get; set; }
