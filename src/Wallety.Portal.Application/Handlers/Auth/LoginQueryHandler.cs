@@ -4,6 +4,7 @@ using System.Text;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using Wallety.Portal.Application.Commands;
+using Wallety.Portal.Application.Helpers;
 using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Response.Auth;
 using Wallety.Portal.Application.Response.User;
@@ -53,7 +54,7 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
             var role = await GetUserRolesAndDefaultRole(existingUser);
 
-            var responseLogin = MapLoginResponse(existingUser!, GenerateJwtToken(existingUser!, role.Items.Where(r => r.IsDefault == true).FirstOrDefault()!));
+            var responseLogin = MapLoginResponse(existingUser!, JwtTokenHelper.GenerateJwtToken(existingUser!, role.Items.Where(r => r.IsDefault == true).FirstOrDefault()!, _config.SecretKey()));
 
             // Set the user with token and expiry date
             // existingUser.Token = responseLogin.SessionToken;
@@ -144,31 +145,6 @@ namespace Wallety.Portal.Application.Handlers.Auth
                 Role = user.RoleName!,
                 TimeStamp = timeStamp
             };
-        }
-
-        private string GenerateJwtToken(UserEntity existingUser, UserRoleEntity role)
-        {
-            var claimList = new List<Claim>
-            {
-                new(ClaimTypes.Role, role.RoleName!),
-                new(ClaimTypes.Email, existingUser.Email!),
-                new(ClaimTypes.Name, existingUser.FirstName),
-                new(ClaimTypes.Surname, existingUser.Surname),
-                new(ClaimTypes.NameIdentifier, existingUser.UserId.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.SecretKey()!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expireDate = DateTime.UtcNow.AddDays(1);
-
-            var token = new JwtSecurityToken(
-                claims: claimList,
-                notBefore: DateTime.UtcNow,
-                expires: expireDate,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private void SetUserInCache(UserEntity existingUser, LoginResponse responseLogin)

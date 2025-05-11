@@ -34,7 +34,6 @@ namespace Wallety.Portal.Core.Entity.User
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
         public string IdentityImage { get; set; } = string.Empty;
-        public Guid? WalletId { get; set; }
         public string PanicCode { get; set; } = string.Empty;
         public string DisplayNumber { get; set; }
 
@@ -57,5 +56,11 @@ namespace Wallety.Portal.Core.Entity.User
 
         public string OneTimePasswordGuid { get; set; } = string.Empty;
         public string ProfileImage { get; set; } = string.Empty;
+
+        public Guid? WalletId { get; set; }
+        public DateTime WalletCreationDate { get; set; }
+        public decimal UsableBalance { get; set; }
+        public decimal PendingAmount { get; set; }
+        public Int32 VoucherPin { get; set; }
     }
 }
