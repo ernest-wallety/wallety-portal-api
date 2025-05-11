@@ -88,9 +88,13 @@ namespace Wallety.Portal.Application.Handlers
 
          var creditWalletResponse = await _service.CreditWallet(LazyMapper.Mapper.Map<CreditWalletModel>(request.Item));
 
+         if (loginResponse?.StatusCode != 200)
+            throw new Exception(creditWalletResponse?.ResponseMessage).WithDisplayData(EnumValidationDisplay.Toastr);
+
+
          var response = new UpdateResponse
          {
-            IsSuccess = (creditWalletResponse?.StatusCode == 200) ? true : false,
+            IsSuccess = true,
             ResponseMessage = creditWalletResponse?.ResponseMessage
          };
 
