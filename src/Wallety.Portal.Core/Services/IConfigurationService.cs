@@ -5,6 +5,6 @@ namespace Wallety.Portal.Core.Services
         string AllowedCreditWalletAccounts();
         string ConnectionString();
         string SecretKey();
-        string CreditLimit();
+        int CreditLimit();
     }
 }

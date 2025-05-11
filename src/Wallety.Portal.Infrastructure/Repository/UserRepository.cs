@@ -34,7 +34,7 @@ namespace Wallety.Portal.Infrastructure.Repository
 
         public Task<UserEntity?> GetUserByEmail(string? email) => GetUserAsync(UsersQuery.GetUserByEmailQuery(), new { Email = _cachingInMemoryService.Get<string>("Email") ?? email });
 
-        public Task<UserEntity?> GetUserByCellNumber() => GetUserAsync(UsersQuery.GetUserByCellNumberQuery(), new { PhoneNumber = _cachingInMemoryService.Get<string>("PhoneNumber") });
+        public Task<UserEntity?> GetUserByCellNumber(string? phoneNumber) => GetUserAsync(UsersQuery.GetUserByCellNumberQuery(), new { PhoneNumber = _cachingInMemoryService.Get<string>("PhoneNumber") ?? phoneNumber });
 
         public async Task<DataList<UserRoleEntity>> GetUserRoles(string? id)
         {
@@ -53,7 +53,7 @@ namespace Wallety.Portal.Infrastructure.Repository
 
         }
 
-        public async Task<DataList<UserSessionEntity>> GetUserSession(string id)
+        public async Task<DataList<UserSessionEntity>> GetUserSession(string? id)
         {
             var query = UsersQuery.GetUserSessionQuery();
             var items = await _sqlContext.SelectQuery<UserSessionEntity>(query, new { UserId = _cachingInMemoryService.Get<string?>("LoggedInUserId") ?? id });

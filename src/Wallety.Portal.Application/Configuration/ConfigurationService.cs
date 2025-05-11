@@ -25,10 +25,12 @@ namespace Wallety.Portal.Application.Configuration
                 ?? GetValue("SECRET_KEY");
         }
 
-        public string CreditLimit()
+        public int CreditLimit()
         {
-            return Environment.GetEnvironmentVariable("CREDIT_LIMIT")
+            var creditLimit = Environment.GetEnvironmentVariable("CREDIT_LIMIT")
                 ?? GetValue("CREDIT_LIMIT");
+
+            return int.TryParse(creditLimit, out var result) ? result : 50000;
         }
 
         private string GetValue(string configName)
