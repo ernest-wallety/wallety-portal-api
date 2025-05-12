@@ -32,14 +32,14 @@ namespace Wallety.Portal.Infrastructure.Repository
 
         public Task<UserEntity?> GetUserById(Guid id) => GetUserAsync(UsersQuery.GetUserByIdQuery(), new { Id = id.ToString() });
 
-        public Task<UserEntity?> GetUserByEmail(string? email) => GetUserAsync(UsersQuery.GetUserByEmailQuery(), new { Email = _cachingInMemoryService.Get<string>("Email") ?? email });
+        public Task<UserEntity?> GetUserByEmail(string? email) => GetUserAsync(UsersQuery.GetUserByEmailQuery(), new { Email = email ?? _cachingInMemoryService.Get<string>("Email") });
 
-        public Task<UserEntity?> GetUserByCellNumber(string? phoneNumber) => GetUserAsync(UsersQuery.GetUserByCellNumberQuery(), new { PhoneNumber = _cachingInMemoryService.Get<string>("PhoneNumber") ?? phoneNumber });
+        public Task<UserEntity?> GetUserByCellNumber(string? phoneNumber) => GetUserAsync(UsersQuery.GetUserByCellNumberQuery(), new { PhoneNumber = phoneNumber ?? _cachingInMemoryService.Get<string>("PhoneNumber") });
 
         public async Task<DataList<UserRoleEntity>> GetUserRoles(string? id)
         {
             var query = UsersQuery.GetUserRolesQuery();
-            var items = await _sqlContext.SelectQuery<UserRoleEntity>(query, new { UserId = _cachingInMemoryService.Get<string?>("LoggedInUserId") ?? id });
+            var items = await _sqlContext.SelectQuery<UserRoleEntity>(query, new { UserId = id ?? _cachingInMemoryService.Get<string?>("LoggedInUserId") });
 
             return new DataList<UserRoleEntity> { Items = [.. items], Count = items.Count };
         }
@@ -56,7 +56,7 @@ namespace Wallety.Portal.Infrastructure.Repository
         public async Task<DataList<UserSessionEntity>> GetUserSession(string? id)
         {
             var query = UsersQuery.GetUserSessionQuery();
-            var items = await _sqlContext.SelectQuery<UserSessionEntity>(query, new { UserId = _cachingInMemoryService.Get<string?>("LoggedInUserId") ?? id });
+            var items = await _sqlContext.SelectQuery<UserSessionEntity>(query, new { UserId = id ?? _cachingInMemoryService.Get<string?>("LoggedInUserId") });
 
             return new DataList<UserSessionEntity> { Items = [.. items], Count = items.Count };
         }
