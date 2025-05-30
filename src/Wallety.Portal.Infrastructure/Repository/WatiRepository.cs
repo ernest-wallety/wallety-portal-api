@@ -1,4 +1,4 @@
-using Wallety.Portal.Core.Entity;
+using Wallety.Portal.Core.Entity.Wati;
 using Wallety.Portal.Core.Repository;
 using Wallety.Portal.Core.Services;
 using Wallety.Portal.Core.Specs;

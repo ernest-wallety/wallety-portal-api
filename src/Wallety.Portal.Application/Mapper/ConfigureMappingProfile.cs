@@ -10,6 +10,7 @@ using Wallety.Portal.Core.Entity;
 using Wallety.Portal.Core.Entity.Customer;
 using Wallety.Portal.Core.Entity.Menu;
 using Wallety.Portal.Core.Entity.User;
+using Wallety.Portal.Core.Entity.Wati;
 using Wallety.Portal.Core.Requests;
 using Wallety.Portal.Core.Requests.Common;
 using Wallety.Portal.Core.Requests.User;
@@ -69,6 +70,8 @@ namespace Wallety.Portal.Application.Mapper
 
             // Wati
             CreateMap<WatiTemplateEntity, WatiTemplateResponse>().ReverseMap();
+            CreateMap<DataList<WatiTemplateEntity>, DataList<WatiTemplateResponse>>().ReverseMap();
+
         }
     }
 }

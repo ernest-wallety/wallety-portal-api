@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MediatR;
 using Wallety.Portal.Application.Mapper;
 using Wallety.Portal.Application.Queries.General;

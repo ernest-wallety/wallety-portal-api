@@ -38,7 +38,15 @@ namespace Wallety.Portal.Infrastructure.DbQueries
         private static string MainSelect()
         {
             var query = $@"
-                SELECT * FROM m wati.message_template;
+                SELECT 
+                
+                    id,
+                    code,
+                    name,
+                    json_payload AS JsonPayload,
+                    created_at AS CreatedAt
+
+                FROM wati.message_template m
             ";
 
             return query;

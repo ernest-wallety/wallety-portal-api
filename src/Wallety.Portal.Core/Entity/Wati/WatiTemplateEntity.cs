@@ -1,4 +1,4 @@
-namespace Wallety.Portal.Core.Entity
+namespace Wallety.Portal.Core.Entity.Wati
 {
     public class WatiTemplateEntity
     {

@@ -7,7 +7,6 @@ using Wallety.Portal.Core.Specs;
 
 namespace Wallety.Portal.Api.Controllers
 {
-    [Route("[controller]")]
     public class WatiController(IMediator mediator, ILogger logger) : ApiController
     {
         private readonly IMediator _mediator = mediator;
@@ -25,7 +24,7 @@ namespace Wallety.Portal.Api.Controllers
 
         [HttpGet("GetTemplate")]
         [ProducesResponseType(typeof(BaseResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTemplate(string code)
+        public async Task<IActionResult> GetTemplate([FromQuery] string code)
         {
             var result = await _mediator.Send(new ItemGeneralQuery<WatiTemplateResponse>(code));
 

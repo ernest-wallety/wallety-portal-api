@@ -145,6 +145,7 @@ namespace Wallety.Portal.Api
             services.AddScoped<IOutboundMailRepository, OutboundMailRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
+            services.AddScoped<IWatiRepository, WatiRepository>();
 
             // Component Interfaces
             services.AddScoped<IPgSqlSelector>(provider =>
