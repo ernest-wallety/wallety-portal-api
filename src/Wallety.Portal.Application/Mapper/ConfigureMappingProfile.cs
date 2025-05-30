@@ -66,6 +66,9 @@ namespace Wallety.Portal.Application.Mapper
 
             // Wallet
             CreateMap<CreditWalletModel, CreditWalletDTO>().ReverseMap();
+
+            // Wati
+            CreateMap<WatiTemplateEntity, WatiTemplateResponse>().ReverseMap();
         }
     }
 }

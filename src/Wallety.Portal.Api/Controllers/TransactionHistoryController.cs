@@ -32,7 +32,6 @@ namespace Wallety.Portal.Api.Controllers
             var result = await _mediator.Send(new ListAllQuery<TransactionHistoryResponse>(reference));
 
             return Ok(ReturnSuccessModel<DataList<TransactionHistoryResponse>>(result));
-
         }
     }
 }

@@ -291,3 +291,7 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+__blobstorage__
+__queuestorage__
+__azurite_db*.json

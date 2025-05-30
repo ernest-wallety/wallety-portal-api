@@ -110,7 +110,17 @@ namespace Wallety.Portal.Api
                 });
 
             services.AddApiVersioning();
-            services.AddHealthChecks();
+
+            services.AddHealthChecks()
+                .AddNpgSql(
+                    connectionString: Environment.GetEnvironmentVariable("PGSQL_CONNECTION_STRING")
+                        ?? configuration.GetConnectionString("PGSQL_CONNECTION_STRING")!,
+                    healthQuery: "SELECT 1;",
+                    name: "postgresql",
+                    tags: ["db", "pgsql"]
+                );
+
+
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallety Portal API", Version = "v1" }); });
 
             //DI
