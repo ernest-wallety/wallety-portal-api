@@ -14,5 +14,6 @@ namespace Wallety.Portal.Core.Repository
         Task<Pagination<CustomerVerifyEntity>> GetUnverifiedCustomers(BaseListCriteria criteria);
         Task<CreateRecordResult> VerifyCustomerAccount(CustomerVerificationModel model);
         Task<List<CustomerVerifyEntity>> GetRejectedUnverifiedCustomers();
+        Task<UpdateRecordResult> UpdateFreezeAccount(Guid id);
     }
 }

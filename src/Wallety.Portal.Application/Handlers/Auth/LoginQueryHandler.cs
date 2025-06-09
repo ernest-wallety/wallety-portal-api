@@ -44,12 +44,9 @@ namespace Wallety.Portal.Application.Handlers.Auth
 
             if (userSession.Items.Any())
             {
-                var session = userSession.Items.FirstOrDefault();
+                var session = userSession.Items.Where(x => x.IsActive).FirstOrDefault();
 
-                if (session != null)
-                {
-                    if (session.IsActive) await _repository.UpdateUserSession(session);
-                }
+                if (session != null) await _repository.UpdateUserSession(session);
             }
 
             var role = await GetUserRolesAndDefaultRole(existingUser);

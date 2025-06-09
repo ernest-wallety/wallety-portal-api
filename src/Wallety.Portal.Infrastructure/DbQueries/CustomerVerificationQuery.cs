@@ -153,5 +153,21 @@ namespace Wallety.Portal.Infrastructure.DbQueries
         }
 
         #endregion
+
+        #region Update Queries
+        public static string UpdateFreezeAccount()
+        {
+            var query = @"
+                UPDATE ""AspNetUsers"" SET
+                    
+                    IsAccountActive	= FALSE,
+                    IsFrozen = TRUE
+ 
+                WHERE ""Id"" = @UserId 
+            ";
+
+            return query;
+        }
+        #endregion
     }
 }

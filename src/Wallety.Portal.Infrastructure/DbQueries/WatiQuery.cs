@@ -43,6 +43,7 @@ namespace Wallety.Portal.Infrastructure.DbQueries
                     id,
                     code,
                     name,
+                    description,
                     json_payload AS JsonPayload,
                     created_at AS CreatedAt
 

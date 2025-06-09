@@ -94,5 +94,17 @@ namespace Wallety.Portal.Infrastructure.Repository
 
             return [.. items];
         }
+
+        public async Task<UpdateRecordResult> UpdateFreezeAccount(Guid id)
+        {
+            var query = CustomerVerificationQuery.UpdateFreezeAccount();
+
+            var result = await _sqlContext.ExecuteAsyncQuery(query, new { UserId = id });
+
+            if (result == false)
+                return UpdateRecordResult.Error("Failed to update freeze account status.");
+
+            return UpdateRecordResult.Successs("Account freeze status updated successfully.");
+        }
     }
 }
