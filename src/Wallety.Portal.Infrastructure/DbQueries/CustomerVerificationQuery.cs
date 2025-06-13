@@ -140,11 +140,16 @@ namespace Wallety.Portal.Infrastructure.DbQueries
             var query = $@"
                 {MainSelect()}
 
-                AND rs.""RegistrationStatusId"" IN (
-                    '{RegistrationStatusConstants.REJECTED}'
+                AND ( 
+                    rs.""RegistrationStatusId"" IN (
+                        '{RegistrationStatusConstants.REJECTED}',
+                        '{RegistrationStatusConstants.PENDING}'
+                    )
+
+                    OR (u.""IdentityImage"" IS NULL OR u.""IdentityImage"" = '')
                 )
 
-                AND (u.""IdentityImage"" IS NULL OR u.""IdentityImage"" = '')
+                AND rs.""RegistrationStatusId"" IS NOT NULL
 
                 GROUP BY u.""Id"", c.""CountryId"", rs.""RegistrationStatusId""
             ";
