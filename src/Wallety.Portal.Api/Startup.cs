@@ -92,6 +92,7 @@ namespace Wallety.Portal.Api
                 builder.WithOrigins(
                     "https://wallety-portal-dev.svc-eu2.zcloud.ws",
                     "https://wallety-portal.svc-eu2.zcloud.ws",
+                    "https://staging.app.wallety.cash",
                     "https://app.wallety.cash",
                     "http://localhost:3000",
                     "http://localhost:4200",
